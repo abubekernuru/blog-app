@@ -8,11 +8,13 @@ import {
   TextInput,
   Button,
 } from 'flowbite-react'
-import {Link} from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
 import {AiOutlineSearch} from 'react-icons/ai'
 import {FaMoon} from 'react-icons/fa'
 
 function Header() {
+  const location = useLocation()
+
   return (
 <Navbar className='border-b-2'>
   <Link to={'/'} className='self-center whitespace-nowrap text-sm sm:text-lg font-semibold dark:text-white'>
@@ -50,13 +52,13 @@ function Header() {
   </div>
 
   <NavbarCollapse>
-    <NavbarLink as={'div'}>
+    <NavbarLink active={location.pathname === '/'} as={'div'}>
       <Link to={'/'}>Home</Link>
     </NavbarLink>
-    <NavbarLink as={'div'}>
+    <NavbarLink active={location.pathname === '/about'} as={'div'}>
       <Link to={'/about'}>About</Link>
     </NavbarLink>
-    <NavbarLink as={'div'}>
+    <NavbarLink active={location.pathname === '/projects'} as={'div'}>
       <Link to={'/projects'}>Projects</Link>
     </NavbarLink>
   </NavbarCollapse>
