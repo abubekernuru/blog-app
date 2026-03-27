@@ -5,9 +5,9 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-app.get('/', (req, res)=>{
-    res.send("Hello Abuki check!")
-})
+//routes
+const userRoute = require('./routes/user.route.js');
+app.use('/api/users', userRoute);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(()=>{
