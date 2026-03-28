@@ -18,7 +18,7 @@ const signup = async (req, res, next)=>{
         await newUser.save()
         res.status(200).json(newUser);
     } catch (error) {
-        next(errorHandler(300, "check custom error"))
+        next(error)
     }
 }
 
