@@ -1,7 +1,7 @@
 import React from 'react'
 import { Footer, FooterBrand, FooterCopyright, FooterDivider, FooterLink, FooterLinkGroup, FooterTitle, FooterIcon } from 'flowbite-react';
 import { Link } from 'react-router-dom'
-import { BsFacebook, BsInstagram, BsTwitter, BsGithub, BsDribbble } from 'react-icons/bs';
+import { BsFacebook, BsTwitter, BsGithub, BsTelegram, BsGit, BsInstagram } from 'react-icons/bs';
 
 function FooterComp() {
     return (
@@ -81,7 +81,7 @@ function FooterComp() {
                             <FooterIcon href='#' icon={BsInstagram}/>
                             <FooterIcon href='#' icon={BsTwitter}/>
                             <FooterIcon href='https://github.com/abubekernuru' icon={BsGithub}/>
-                            <FooterIcon href='#' icon={BsDribbble}/>
+                            <FooterIcon href='#' icon={BsTelegram}/>
                         </div>
                     </div>
         </div>
