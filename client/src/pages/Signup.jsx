@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Button, Label, TextInput } from 'flowbite-react';
+import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 
 function Signup() {
 
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleChange = (e)=>{
     setFormData({...formData, [e.target.id]: e.target.value})
@@ -14,7 +16,12 @@ function Signup() {
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
+    if(!formData.username || !formData.email || !formData.password){
+      return setError("All fields are required");
+    }
     try {
+      setError(null);
+      setLoading(true);
       const res = await fetch('http://localhost:3002/api/auth/signup', {
         method: "POST",
         headers:{
@@ -25,13 +32,16 @@ function Signup() {
       
       const data = await res.json();
       if (data.success === false) {
-      return console.log(data.message); 
+        setLoading(false);
+      return setError(data.message);  
     }
-      console.log(data)
+      setLoading(false);
+      setError(null);
       setFormData({})
-      navigate('/')
+      navigate('/signin')
     } catch (error) {
-      console.log(error.message)
+      setLoading(false);
+      setError(error.message);
     }
   }
   return (
@@ -68,13 +78,21 @@ function Signup() {
               </div>
               <TextInput type='password' id='password' placeholder='Your password' onChange={(e)=>handleChange(e)}  />
             </div>
-            <Button type='submit' className='bg-linear-to-r from-purple-500 to-pink-500 text-white py-2 px-4 rounded cursor-pointer' >
-              Sign Up
+            <Button type='submit' className='bg-linear-to-r from-purple-500 to-pink-500 text-white py-2 px-4 rounded cursor-pointer' disabled={loading}>
+              {loading ? 
+              <>
+                <Spinner aria-label="Loading Spinner" size="sm" />
+                <span className='ml-2'>Loading...</span>
+              </> :
+              "Sign Up"}
             </Button>
           </form>
           <div className='mt-4 text-center'>
             <p className='text-sm'>Already have an account? <Link to={'/signin'} className='text-blue-500 hover:underline'>Log in</Link></p>
           </div>
+            {error && <Alert className='mt-5' color='failure'>
+              {error}
+            </Alert>}
         </div>
     </div>
   </div>
