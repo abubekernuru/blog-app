@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user.controller');
-const { test } = userController;
-// const authMiddleware = require('../middlewares/auth.middleware');
+const { test } = require('../controllers/user.controller');
 
 // test api route
 router.get('/test', test)
