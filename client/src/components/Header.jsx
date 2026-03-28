@@ -43,7 +43,7 @@ function Header() {
     </Button>
 
     <Link to={'/signin'}>
-      <Button color="purple">
+      <Button color="pink" outline>
         Sign In
       </Button>
     </Link>
