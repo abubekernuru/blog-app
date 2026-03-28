@@ -1,8 +1,9 @@
 const User = require('../model/user.model.js');
 const bcryptjs = require('bcryptjs');
+const errorHandler = require('../utils/error.js')
 
 
-const signup = async (req, res)=>{
+const signup = async (req, res, next)=>{
     const {username, email, password} = req.body;
     if(!username || !email || !password || username===""|| email===""|| password===""){
         return res.status(400).json({message: "All fields are required"})
@@ -17,7 +18,7 @@ const signup = async (req, res)=>{
         await newUser.save()
         res.status(200).json(newUser);
     } catch (error) {
-        console.log(error)
+        next(errorHandler(300, "check custom error"))
     }
 }
 

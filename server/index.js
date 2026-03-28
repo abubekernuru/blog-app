@@ -22,3 +22,14 @@ mongoose.connect(process.env.MONGO_URI)
             console.log("app is listening on port 3002")
         })
     })
+
+
+app.use((err, req, res, next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal server error";
+    res.status(statusCode).json({
+        success: false,
+        statusCode,
+        message
+    });
+})
