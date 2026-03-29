@@ -1,6 +1,7 @@
 const User = require('../model/user.model.js');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const errorHandler = require('../utils/error.js')
 
 
 const signup = async (req, res, next)=>{
@@ -33,11 +34,11 @@ const signin = async (req, res, next)=>{
     const user = await User.findOne({email});
 
     if(!user){
-        return "Invalid Credentials"
+        return next(errorHandler(400, "User not found!"))
     }
     const isValid = bcryptjs.compareSync(password, user.password)
     if(!isValid){
-        return "Invalid Credentials"
+        return  next(errorHandler(400, "Invalid Credentials"))
     }
     try {
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
