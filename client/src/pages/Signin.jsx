@@ -5,10 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Signin() {
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,7 +32,7 @@ function Signin() {
       });
       
       const data = await res.json();
-      console.log(data)
+      // console.log(data)
       if (data.success === false) {
         setLoading(false);
       return setError(data.message);  
