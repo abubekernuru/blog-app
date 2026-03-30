@@ -2,27 +2,25 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signinFailure, signinStart, signinSuccess } from '../redux/userSlice';
 
 function Signin() {
-
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleChange = (e)=>{
     setFormData({...formData, [e.target.id]: e.target.value})
   }
-  // console.log(formData)
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
-    if(!formData.email || !formData.password){
-        setLoading(false);
-      return setError("All fields are required");
+    if(!formData.email || !formData.password){    
+      return dispatch(signinFailure("All fields are required"));
     }
     try {
-      setError(null);
-      setLoading(true);
+      dispatch(signinStart());
       const res = await fetch('http://localhost:3002/api/auth/signin', {
         method: "POST",
         headers:{
@@ -34,16 +32,13 @@ function Signin() {
       const data = await res.json();
       // console.log(data)
       if (data.success === false) {
-        setLoading(false);
-      return setError(data.message);  
+      return dispatch(signinFailure(data.message));  
     }
-      setLoading(false);
-      setError(null);
       setFormData({})
+      dispatch(signinSuccess(data));
       navigate('/')
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch(signinFailure(error.message));
     }
   }
   return (
@@ -66,13 +61,13 @@ function Signin() {
               <div className="mb-2 block">
                 <Label htmlFor='email' className='dark:text-black'>Your email</Label>
               </div>
-              <TextInput type='email' placeholder='Your email' id='email' value={formData.email} onChange={(e)=>handleChange(e)}  />
+              <TextInput type='email' placeholder='Your email' id='email' value={formData.email || ''} onChange={(e)=>handleChange(e)}  />
             </div>
             <div>
               <div className="mb-2 block">
                 <Label htmlFor='password' className='dark:text-black'>Your password</Label>
               </div>
-              <TextInput type='password' id='password' placeholder='Your password' value={formData.password} onChange={(e)=>handleChange(e)}  />
+              <TextInput type='password' id='password' placeholder='Your password' value={formData.password || ''} onChange={(e)=>handleChange(e)}  />
             </div>
             <Button type='submit' className='bg-linear-to-r from-purple-500 to-pink-500 text-white py-2 px-4 rounded cursor-pointer' disabled={loading}>
               {loading ? 
