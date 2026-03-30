@@ -4,6 +4,7 @@ import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signinFailure, signinStart, signinSuccess } from '../redux/userSlice';
+import OAuth from '../components/OAuth';
 
 function Signin() {
   const dispatch = useDispatch();
@@ -77,6 +78,7 @@ function Signin() {
               </> :
               "Sign In"}
             </Button>
+            <OAuth />
           </form>
           <div className='mt-4 text-center'>
             <p className='text-sm'>Don't have an account? <Link to={'/signup'} className='text-blue-500 hover:underline'>Sign up</Link></p>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
+import OAuth from '../components/OAuth';
 
 function Signup() {
 
@@ -86,6 +87,7 @@ function Signup() {
               </> :
               "Sign Up"}
             </Button>
+            <OAuth />
           </form>
           <div className='mt-4 text-center'>
             <p className='text-sm'>Already have an account? <Link to={'/signin'} className='text-blue-500 hover:underline'>Log in</Link></p>
