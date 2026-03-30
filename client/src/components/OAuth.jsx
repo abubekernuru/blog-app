@@ -25,7 +25,7 @@ const handleGoogleClick = async () => {
                 avatar: result.user.photoURL
             })
     })
-        // console.log(result.user)
+        console.log(result.user)
         const data = await res.json();
         dispatch(signinSuccess(data))
         navigate('/')

@@ -1,7 +1,7 @@
 const User = require('../model/user.model.js');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const errorHandler = require('../utils/error.js')
+const errorHandler = require('../utils/error.js');
 
 
 const signup = async (req, res, next)=>{
@@ -38,7 +38,7 @@ const signin = async (req, res, next)=>{
     }
     const isValid = bcryptjs.compareSync(password, user.password)
     if(!isValid){
-        return  next(errorHandler(400, "Invalid Credentials"))
+        return next(errorHandler(400, "Invalid Credentials"))
     }
     try {
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
@@ -46,11 +46,42 @@ const signin = async (req, res, next)=>{
         res.cookie('access_token', token, {httpOnly: true})
         .status(200).json(rest)
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
+const googleAuth = async (req, res, next)=>{
+    const {name, email, avatar} = req.body;
+    try {
+        const user = await User.findOne({email});
+        if(user){
+            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+            const {password: pass, ...rest} = user._doc;
+            res.cookie('access_token', token, {httpOnly: true})
+            .status(200).json(rest)
+            
+        } else{
+            const newUsername = name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4);
+            const generatedPw = Math.random().toString(36).slice(-8);
+            const hashedPassword = bcryptjs.hashSync(generatedPw, 10);
+            const newUser = new User({
+                username: newUsername,
+                email: email,
+                password: hashedPassword,
+                avatar: avatar
+            })
+            await newUser.save();
+            const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET);
+            const {password: pass, ...rest} = newUser._doc;
+            res.cookie('access_token', token, {httpOnly: true})
+            .status(200).json(rest);
+        }
+        
+    } catch (error) {
+        next(error)
+    }
+}
 
 
-module.exports = {signup, signin}
+module.exports = {signup, signin, googleAuth}
