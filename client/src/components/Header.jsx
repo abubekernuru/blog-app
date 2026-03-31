@@ -15,12 +15,26 @@ import {
 } from 'flowbite-react'
 import {Link, useLocation} from 'react-router-dom'
 import {AiOutlineSearch} from 'react-icons/ai'
-import {FaMoon} from 'react-icons/fa'
-import {useSelector} from 'react-redux'
+import {FaMoon, FaSun} from 'react-icons/fa'
+import {useSelector, useDispatch} from 'react-redux'
+import { toggleTheme } from '../redux/themeSlice'
+
+import { useEffect } from 'react'
 
 function Header() {
   const location = useLocation()
   const { currentUser }= useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  const { theme }= useSelector((state) => state.theme)
+
+
+useEffect(() => {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}, [theme]);
 
   return (
 <Navbar className='border-b-2'>
@@ -45,9 +59,14 @@ function Header() {
   </Button>
 
   <div className='flex gap-2 md:order-2'>
-    <Button className='w-12 h-10' color='gray' pill>
-      <FaMoon />
-    </Button>
+  <Button
+    className='w-12 h-10 hidden sm:inline'
+    color='gray'
+    pill
+    onClick={() => dispatch(toggleTheme())}
+  >
+    {theme === 'dark' ? <FaSun /> : <FaMoon />}
+  </Button>
     {currentUser ? (
       <Dropdown
       inline
@@ -84,13 +103,13 @@ function Header() {
   </div>
 
   <NavbarCollapse>
-    <NavbarLink active={location.pathname === '/'} as={'div'}>
+    <NavbarLink active={location.pathname === '/'} as={'div'} className='text-gray-800'>
       <Link to={'/'}>Home</Link>
     </NavbarLink>
-    <NavbarLink active={location.pathname === '/about'} as={'div'}>
+    <NavbarLink active={location.pathname === '/about'} as={'div'} className='text-gray-800'>
       <Link to={'/about'}>About</Link>
     </NavbarLink>
-    <NavbarLink active={location.pathname === '/projects'} as={'div'}>
+    <NavbarLink active={location.pathname === '/projects'} as={'div'} className='text-gray-800'>
       <Link to={'/projects'}>Projects</Link>
     </NavbarLink>
   </NavbarCollapse>

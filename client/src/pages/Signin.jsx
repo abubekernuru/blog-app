@@ -60,13 +60,13 @@ function Signin() {
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor='email' className='dark:text-black'>Your email</Label>
+                <Label htmlFor='email' className='dark:text-white'>Your email</Label>
               </div>
               <TextInput type='email' placeholder='Your email' id='email' value={formData.email || ''} onChange={(e)=>handleChange(e)}  />
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor='password' className='dark:text-black'>Your password</Label>
+                <Label htmlFor='password' className='dark:text-white'>Your password</Label>
               </div>
               <TextInput type='password' id='password' placeholder='Your password' value={formData.password || ''} onChange={(e)=>handleChange(e)}  />
             </div>
