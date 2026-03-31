@@ -15,7 +15,7 @@ function Dashboard() {
     // console.log(tabFromUrl)
   },[location.search])
   return (
-    <div className="flex flex-col md:flex-row  min-h-screen">
+    <div className="flex flex-col md:flex-row  min-h-screen dark:bg-gray-900 text-white">
       {/* Sidebar */}
       <div className="md:w-56">
         <DashSidebar />
