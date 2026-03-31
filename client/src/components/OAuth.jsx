@@ -4,6 +4,7 @@ import { Button } from 'flowbite-react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { signinFailure, signinSuccess } from '../redux/userSlice';
+import { AiFillGoogleCircle } from 'react-icons/ai';
 
 function OAuth() {
     const dispatch = useDispatch();
@@ -35,8 +36,9 @@ const handleGoogleClick = async () => {
 }
 
 return (
-    <Button onClick={handleGoogleClick} className='bg-red-500 text-white cursor-pointer'>
-        Continue with google
+    // beautiful google button with google icon redesign it with flowbite-react very cool gradient outline and hover effect
+    <Button onClick={handleGoogleClick} type='button' color="green" outline className='cursor-pointer'>
+        <AiFillGoogleCircle className='w-6 h-6 mr-2' /> Continue with google
     </Button>
 )
 }
