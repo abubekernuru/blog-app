@@ -1,15 +1,19 @@
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useSelector } from 'react-redux';
+import { useRef } from 'react';
 
 function DashProfile() {
-  const {currentUser} = useSelector((state)=> state.user)
+  const {currentUser} = useSelector((state)=> state.user);
+  const fileInputRef = useRef(null);
   return (
     <div className='max-w-lg mx-auto p-3 w-full flex flex-col gap-5'>
           <h1 className='text-3xl text-center font-semibold my-5 text-gray-800 dark:text-white'>Profile</h1>
+            <input type="file" hidden ref={fileInputRef} />
           <div className='w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'>
             <img 
               src={currentUser.avatar}
               alt="Profile" 
+              onClick={()=>fileInputRef.current.click()}
               className='rounded-full w-full h-full selfce object-cover border-8 border-[lightgray]'
               />
           </div>
