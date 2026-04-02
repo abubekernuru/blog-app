@@ -1,8 +1,11 @@
-const cloudinary =  require('cloudinary')
+const cloudinary = require('cloudinary').v2;
 const dotenv = require('dotenv');
 dotenv.config();
+const errorHandler = require('../utils/error.js')
+const User = require('../model/user.model.js')
+const bcryptjs = require('bcryptjs');
 
-const cloudinaryConfig = cloudinary.v2.config({
+cloudinary.config({
     cloud_name: process.env.Cloudinary_Cloud_Name,
     api_key: process.env.Cloudinary_API_Key,
     api_secret: process.env.Cloudinary_API_Secret
@@ -10,7 +13,7 @@ const cloudinaryConfig = cloudinary.v2.config({
 
 const generateSignature = (req, res) => {
     const timestamp = Math.round((new Date()).getTime() / 1000);
-    const signature = cloudinary.utils.api_sign_request({ timestamp: timestamp }, process.env.Cloudinary_API_Secret);
+    const signature = cloudinary.utils.api_sign_request({ timestamp: timestamp, upload_preset: 'blog_profile' }, process.env.Cloudinary_API_Secret);
     res.json({ signature, timestamp });
 }
 
@@ -18,4 +21,37 @@ const test = (req, res) => {
     res.json({ message: 'User API is working!' });
 }
 
-module.exports = { test, generateSignature };
+const updateUser = async (req, res, next) => {
+    const { userId } = req.params;
+    if(userId !== req.user.id) {
+        return next(errorHandler(400, 'You are only allowed to update your own account!'));
+    }
+
+    if(req.body.password){
+        if(req.body.password.length < 6){
+            return next(errorHandler(400, "Unauthorized"))
+        }
+        req.body.password = bcryptjs.hashSync(req.body.password, 10)
+    }
+    if (req.body.username) {
+        req.body.username = req.body.username.split(" ").join("").toLowerCase();
+    }
+
+    try {
+        const update = await User.findByIdAndUpdate(userId, {
+            $set:{
+                username: req.body.username,
+                email: req.body.email,
+                password: req.body.password,
+                avatar: req.body.avatar
+            }
+        }, {new: true});
+        const {password: pass, ...rest} = update._doc;
+        res.status(201).json(rest);
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+module.exports = { test, generateSignature, updateUser };

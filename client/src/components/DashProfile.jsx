@@ -1,15 +1,18 @@
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useSelector } from 'react-redux';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function DashProfile() {
   const {currentUser} = useSelector((state)=> state.user);
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState(null);
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       try {
+        setImageFileUrl(URL.createObjectURL(file));
         const resSign = await fetch('http://localhost:3002/api/users/sign-image');
         const { signature, timestamp } = await resSign.json();
         const uploadData = new FormData();
@@ -35,7 +38,7 @@ function DashProfile() {
             <input type="file" hidden ref={fileInputRef} onChange={(e)=>handleFileChange(e)} />
           <div className='w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'>
             <img 
-              src={imageUrl || currentUser.avatar}
+              src={imageFileUrl || imageUrl || currentUser.avatar}
               alt="Profile" 
               onClick={()=>fileInputRef.current?.click()}
               className='rounded-full w-full h-full self-center object-cover border-8 border-[lightgray]'
