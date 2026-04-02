@@ -1,20 +1,44 @@
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useSelector } from 'react-redux';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 function DashProfile() {
   const {currentUser} = useSelector((state)=> state.user);
   const fileInputRef = useRef(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const resSign = await fetch('http://localhost:3002/api/users/sign-image');
+        const { signature, timestamp } = await resSign.json();
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+        uploadData.append('api_key', import.meta.env.VITE_Cloudinary_API_Key);
+        uploadData.append('signature', signature);
+        uploadData.append('timestamp', timestamp);
+        const res = await fetch('https://api.cloudinary.com/v1_1/dv8q3oyfj/image/upload', {
+          method: 'POST',
+          body: uploadData
+        });
+        const data = await res.json();
+        setImageUrl(data.secure_url);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+      
+    }};
+    // console.log(imageUrl)
   return (
     <div className='max-w-lg mx-auto p-3 w-full flex flex-col gap-5'>
           <h1 className='text-3xl text-center font-semibold my-5 text-gray-800 dark:text-white'>Profile</h1>
-            <input type="file" hidden ref={fileInputRef} />
+            <input type="file" hidden ref={fileInputRef} onChange={(e)=>handleFileChange(e)} />
           <div className='w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'>
             <img 
-              src={currentUser.avatar}
+              src={imageUrl || currentUser.avatar}
               alt="Profile" 
-              onClick={()=>fileInputRef.current.click()}
-              className='rounded-full w-full h-full selfce object-cover border-8 border-[lightgray]'
+              onClick={()=>fileInputRef.current?.click()}
+              className='rounded-full w-full h-full self-center object-cover border-8 border-[lightgray]'
               />
           </div>
           <form className='flex flex-col gap-4'>
