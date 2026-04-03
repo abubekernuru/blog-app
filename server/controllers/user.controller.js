@@ -26,26 +26,25 @@ const updateUser = async (req, res, next) => {
     if(userId !== req.user.id) {
         return next(errorHandler(400, 'You are only allowed to update your own account!'));
     }
+    const updateFields = {};
+    if (req.body.email) updateFields.email = req.body.email;
+    if (req.body.avatar) updateFields.avatar = req.body.avatar;
 
     if(req.body.password){
         if(req.body.password.length < 6){
-            return next(errorHandler(400, "Unauthorized"))
+            return next(errorHandler(400, "Password must be at least 6 characters"))
         }
         req.body.password = bcryptjs.hashSync(req.body.password, 10)
+        updateFields.password = req.body.password
     }
     if (req.body.username) {
         req.body.username = req.body.username.split(" ").join("").toLowerCase();
+        updateFields.username = req.body.username
     }
 
     try {
-        const update = await User.findByIdAndUpdate(userId, {
-            $set:{
-                username: req.body.username,
-                email: req.body.email,
-                password: req.body.password,
-                avatar: req.body.avatar
-            }
-        }, {new: true});
+        const update = await User.findByIdAndUpdate(userId, 
+            {$set:updateFields}, {new: true});
         const {password: pass, ...rest} = update._doc;
         res.status(201).json(rest);
     } catch (error) {
