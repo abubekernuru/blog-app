@@ -23,6 +23,8 @@ const test = (req, res) => {
 
 const updateUser = async (req, res, next) => {
     const { userId } = req.params;
+    console.log('updateUser userId:', userId);
+    console.log('updateUser req.user.id:', req.user.id);
     if(userId !== req.user.id) {
         return next(errorHandler(400, 'You are only allowed to update your own account!'));
     }
@@ -44,13 +46,21 @@ const updateUser = async (req, res, next) => {
 
     try {
         const update = await User.findByIdAndUpdate(userId, 
-            {$set:updateFields}, {new: true});
+            {$set:updateFields}, {returnDocument: 'after'});
+        console.log('update result:', update);
+        if (!update) {
+            return next(errorHandler(404, 'User not found'));
+        }
         const {password: pass, ...rest} = update._doc;
+        console.log('sending response 201');
         res.status(201).json(rest);
     } catch (error) {
+        console.log('update error:', error);
         next(error)
     }
 
 }
+
+
 
 module.exports = { test, generateSignature, updateUser };

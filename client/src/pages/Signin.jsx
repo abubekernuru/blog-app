@@ -22,7 +22,7 @@ function Signin() {
     }
     try {
       dispatch(signinStart());
-      const res = await fetch('http://localhost:3002/api/auth/signin', {
+      const res = await fetch('/api/auth/signin', {
         method: "POST",
         headers:{
           'Content-Type': 'application/json'

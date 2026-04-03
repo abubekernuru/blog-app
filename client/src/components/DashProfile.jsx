@@ -1,9 +1,11 @@
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUserSuccess } from '../redux/userSlice';
 import { useRef, useState } from 'react';
 
 function DashProfile() {
   const { currentUser } = useSelector((state)=> state.user);
+  const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
@@ -14,7 +16,7 @@ function DashProfile() {
     if (file) {
       try {
         setImageFileUrl(URL.createObjectURL(file));
-        const resSign = await fetch('http://localhost:3002/api/user/sign-image');
+        const resSign = await fetch('/api/user/sign-image');
         const { signature, timestamp } = await resSign.json();
         const uploadData = new FormData();
         uploadData.append('file', file);
@@ -29,8 +31,8 @@ function DashProfile() {
         });
         const data = await res.json();
         if(data.secure_url){
-          console.log(imageUrl)
           setImageUrl(data.secure_url);
+          console.log(imageUrl)
           setFormData((prevData)=>({
             ...prevData, avatar: data.secure_url,
           }))
@@ -45,18 +47,20 @@ function DashProfile() {
     const handleSubmit = async (e)=>{
       e.preventDefault();
       try {
-        const res = await fetch(`http://localhost:3002/api/user/update/${currentUser._id}`, {
+        const res = await fetch(`/api/user/update/${currentUser._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          credentials: 'include',
           body: JSON.stringify(formData)
         })
         const data = await res.json();
+        console.log('update response status:', res.status);
+        console.log('update data:', data);
         if(data.success === false){
           return 
         }
+        dispatch(updateUserSuccess(data));
       } catch (error) {
         console.log(error)
       }

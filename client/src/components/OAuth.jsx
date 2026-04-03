@@ -15,7 +15,7 @@ const handleGoogleClick = async () => {
     const auth = getAuth(app);
     try {
         const result = await signInWithPopup(auth, provider);
-        const res = await fetch('http://localhost:3002/api/auth/google',{
+        const res = await fetch('/api/auth/google',{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
