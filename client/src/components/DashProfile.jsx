@@ -10,6 +10,9 @@ function DashProfile() {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -47,6 +50,9 @@ function DashProfile() {
     const handleSubmit = async (e)=>{
       e.preventDefault();
       try {
+        setError(null);
+        setLoading(true);
+        setSuccess(null);
         const res = await fetch(`/api/user/update/${currentUser._id}`, {
           method: 'PUT',
           headers: {
@@ -60,6 +66,9 @@ function DashProfile() {
         if(data.success === false){
           return 
         }
+        setSuccess('Profile updated successfully!');
+        setError(null);
+        setLoading(false);
         dispatch(updateUserSuccess(data));
       } catch (error) {
         console.log(error)
@@ -109,8 +118,10 @@ function DashProfile() {
               />
             </div>
             <Button type='submit' className="bg-linear-to-r from-purple-500 to-pink-500 text-white    hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer">
-              Update Profile
+              {loading ? <Spinner size="sm" /> : 'Update Profile'}
             </Button>
+            {error && <Alert color="failure">{error}</Alert>}
+            {success && <Alert color="success">{success}</Alert>}
           </form>
           <div className='text-red-500 flex justify-between'>
             <span className='cursor-pointer'>Delete Account</span>
