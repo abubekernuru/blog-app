@@ -95,7 +95,19 @@ function DashProfile() {
         }
       }
     };
-
+    const handleSignout = async ()=>{
+      try {
+        const res = await fetch('/api/user/signout', {
+          method: 'POST',
+        })
+        const data = await res.json();
+        dispatch(signoutSuccess());
+        setError(null);
+        alert(data);
+      } catch (error) {
+        setError('Error signing out. Please try again.');
+      }
+    }
 
   return (
     <div className='max-w-lg mx-auto p-3 w-full flex flex-col gap-5'>
@@ -144,7 +156,7 @@ function DashProfile() {
           </form>
           <div className='text-red-500 flex justify-between'>
             <span className='cursor-pointer' onClick={handleDelete}>Delete Account</span>
-            <span className='cursor-pointer'>Sign Out</span>
+            <span className='cursor-pointer' onClick={handleSignout}>Sign Out</span>
           </div>
         </div>
   )
