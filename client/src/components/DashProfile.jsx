@@ -61,8 +61,8 @@ function DashProfile() {
           body: JSON.stringify(formData)
         })
         const data = await res.json();
-        console.log('update response status:', res.status);
-        console.log('update data:', data);
+        // console.log('update response status:', res.status);
+        // console.log('update data:', data);
         if(data.success === false){
           return 
         }
@@ -118,7 +118,7 @@ function DashProfile() {
               />
             </div>
             <Button type='submit' className="bg-linear-to-r from-purple-500 to-pink-500 text-white    hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer">
-              {loading ? <Spinner size="sm" /> : 'Update Profile'}
+              {loading ? (<><Spinner size="sm" /> Updating...</>) : 'Update Profile'}
             </Button>
             {error && <Alert color="failure">{error}</Alert>}
             {success && <Alert color="success">{success}</Alert>}
