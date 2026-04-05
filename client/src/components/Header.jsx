@@ -60,7 +60,7 @@ useEffect(() => {
 
   <div className='flex gap-2 md:order-2'>
   <Button
-    className='w-12 h-10 hidden sm:inline'
+    className='w-12 h-10 hidden sm:inline cursor-pointer'
     color='gray'
     pill
     onClick={() => dispatch(toggleTheme())}
@@ -72,7 +72,7 @@ useEffect(() => {
       inline
       arrowIcon={false}
       label={
-        <Avatar alt='user' img={currentUser.avatar} rounded />
+        <Avatar alt='user' img={currentUser.avatar} rounded className='cursor-pointer' />
       }
       >
         <DropdownHeader>
