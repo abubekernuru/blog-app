@@ -61,6 +61,19 @@ const updateUser = async (req, res, next) => {
 
 }
 
+const deleteUser = async (req, res, next) => {
+    const {userId} = req.params;
+    if(userId !== req.user.id) {
+        return next(errorHandler(400, 'You are only allowed to update your own account!'));
+    }
+    try {
+        await User.findByIdAndDelete(userId);
+        res.clearCookie('access_token')
+        res.status(200).json('User has been deleted succefully')
+    } catch (error) {
+        next(error)
+    }
+}
 
 
-module.exports = { test, generateSignature, updateUser };
+module.exports = { test, generateSignature, updateUser, deleteUser };

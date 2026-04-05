@@ -1,6 +1,6 @@
 import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateUserSuccess } from '../redux/userSlice';
+import { updateUserSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/userSlice';
 import { useRef, useState } from 'react';
 
 function DashProfile() {
@@ -77,7 +77,26 @@ function DashProfile() {
     const handleChange = (e)=>{
       setFormData({...formData, [e.target.id]: e.target.value})
     }
-    // console.log(formData)
+    
+    const handleDelete = async ()=>{
+      dispatch(deleteUserStart());
+      if(window.confirm('Are you sure you want to delete your account? This action cannot be undone.')){
+        try {
+          const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+            method: 'DELETE',
+          })
+          const data = await res.json();
+          dispatch(deleteUserSuccess(data));
+          dispatch(signoutSuccess());
+          setError(null);
+          alert(data);
+        } catch (error) {
+          dispatch(deleteUserFailure(error.message));
+        }
+      }
+    };
+
+
   return (
     <div className='max-w-lg mx-auto p-3 w-full flex flex-col gap-5'>
           <h1 className='text-3xl text-center font-semibold my-5 text-gray-800 dark:text-white'>Profile</h1>
@@ -124,7 +143,7 @@ function DashProfile() {
             {success && <Alert color="success">{success}</Alert>}
           </form>
           <div className='text-red-500 flex justify-between'>
-            <span className='cursor-pointer'>Delete Account</span>
+            <span className='cursor-pointer' onClick={handleDelete}>Delete Account</span>
             <span className='cursor-pointer'>Sign Out</span>
           </div>
         </div>
