@@ -20,6 +20,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { toggleTheme } from '../redux/themeSlice'
 
 import { useEffect } from 'react'
+import { signoutSuccess } from '../redux/userSlice'
 
 function Header() {
   const location = useLocation()
@@ -36,6 +37,18 @@ useEffect(() => {
   }
 }, [theme]);
 
+const handleSignout = async ()=>{
+  try {
+    const res = await fetch('/api/user/signout', {
+      method: 'POST',
+    })
+    const data = await res.json();
+    dispatch(signoutSuccess());
+    alert(data);
+  } catch (error) {
+    console.log('Error signing out. Please try again.', error);
+  }
+}
   return (
 <Navbar className='border-b-2'>
   <Link to={'/'} className='self-center whitespace-nowrap text-sm sm:text-lg font-semibold dark:text-white'>
@@ -85,7 +98,7 @@ useEffect(() => {
         </DropdownItem>
         </Link>
         <DropdownDivider />
-        <Link to={'/signout'}>
+        <Link to={'/'} onClick={handleSignout}>
         <DropdownItem>
           Sign out
         </DropdownItem>

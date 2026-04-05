@@ -105,7 +105,7 @@ function DashProfile() {
         setError(null);
         alert(data);
       } catch (error) {
-        setError('Error signing out. Please try again.');
+        setError('Error signing out. Please try again.', error);
       }
     }
 
