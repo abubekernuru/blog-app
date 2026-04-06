@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateUserSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess, updateUserStart } from '../redux/userSlice';
 import { useRef, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { Link } from 'react-router-dom'
 
 function DashProfile() {
   const { currentUser, loading, error} = useSelector((state)=> state.user);
@@ -148,11 +149,13 @@ function DashProfile() {
               {loading ? (<><Spinner size="sm" /> Updating...</>) : 'Update Profile'}
             </Button>
             {currentUser.isAdmin && 
-              <Button type='button'
-                className="bg-green-500 text-white hover:bg-green-600 focus:ring-green-200 dark:focus:ring-green-800 cursor-pointer"
-              >
-                Create Post
-              </Button>
+              <Link to={'/createpost'}>
+                <Button type='button'
+                  className="w-full bg-green-500 text-white hover:bg-green-600 focus:ring-green-200 dark:focus:ring-green-800 cursor-pointer"
+                >
+                  Create Post
+                </Button>
+              </Link>
             }
             {error && <Alert color="failure">{error}</Alert>}
             {success && <Alert color="success">{success}</Alert>}
