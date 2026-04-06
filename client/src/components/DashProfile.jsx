@@ -1,7 +1,8 @@
-import { Button, Label, Spinner, TextInput, Alert } from 'flowbite-react';
+import { Button, Label, Spinner, TextInput, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'flowbite-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/userSlice';
 import { useRef, useState } from 'react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 function DashProfile() {
   const { currentUser } = useSelector((state)=> state.user);
@@ -13,6 +14,7 @@ function DashProfile() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -79,6 +81,7 @@ function DashProfile() {
     }
     
     const handleDelete = async ()=>{
+      setShowModal(false);
       dispatch(deleteUserStart());
       if(window.confirm('Are you sure you want to delete your account? This action cannot be undone.')){
         try {
@@ -155,9 +158,26 @@ function DashProfile() {
             {success && <Alert color="success">{success}</Alert>}
           </form>
           <div className='text-red-500 flex justify-between'>
-            <span className='cursor-pointer' onClick={handleDelete}>Delete Account</span>
+            <span className='cursor-pointer' onClick={()=>setShowModal(true)}>Delete Account</span>
             <span className='cursor-pointer' onClick={handleSignout}>Sign Out</span>
           </div>
+          <Modal show={showModal} onClose={()=>setShowModal(false)} size="md" popup={true}>
+            <ModalHeader />
+            <ModalBody>
+              <div className='text-center'>
+                <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto mt-3'/>
+                <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-300'>Are you sure you want to delete your account? This action cannot be undone.</h3>
+                <div className='flex justify-center gap-6'>
+                  <Button color="failure" className='bg-red-600 text-white cursor-pointer' onClick={handleDelete}>
+                    Yes, Delete My Account
+                  </Button>
+                  <Button color="gray" onClick={()=>setShowModal(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </ModalBody>
+          </Modal>
         </div>
   )
 }
