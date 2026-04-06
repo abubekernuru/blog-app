@@ -1,18 +1,16 @@
 import { Button, Label, Spinner, TextInput, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'flowbite-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateUserSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/userSlice';
+import { updateUserSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess, updateUserStart } from '../redux/userSlice';
 import { useRef, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 function DashProfile() {
-  const { currentUser } = useSelector((state)=> state.user);
+  const { currentUser, loading, error} = useSelector((state)=> state.user);
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -52,9 +50,8 @@ function DashProfile() {
     const handleSubmit = async (e)=>{
       e.preventDefault();
       try {
-        setError(null);
-        setLoading(true);
         setSuccess(null);
+        dispatch(updateUserStart());
         const res = await fetch(`/api/user/update/${currentUser._id}`, {
           method: 'PUT',
           headers: {
@@ -69,8 +66,6 @@ function DashProfile() {
           return 
         }
         setSuccess('Profile updated successfully!');
-        setError(null);
-        setLoading(false);
         dispatch(updateUserSuccess(data));
       } catch (error) {
         console.log(error)
@@ -91,7 +86,6 @@ function DashProfile() {
           const data = await res.json();
           dispatch(deleteUserSuccess(data));
           dispatch(signoutSuccess());
-          setError(null);
           alert(data);
         } catch (error) {
           dispatch(deleteUserFailure(error.message));
@@ -105,10 +99,9 @@ function DashProfile() {
         })
         const data = await res.json();
         dispatch(signoutSuccess());
-        setError(null);
         alert(data);
       } catch (error) {
-        setError('Error signing out. Please try again.', error);
+        console.log('Error signing out. Please try again.', error);
       }
     }
 
@@ -154,6 +147,13 @@ function DashProfile() {
             <Button type='submit' className="bg-linear-to-r from-purple-500 to-pink-500 text-white    hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer">
               {loading ? (<><Spinner size="sm" /> Updating...</>) : 'Update Profile'}
             </Button>
+            {currentUser.isAdmin && 
+              <Button type='button'
+                className="bg-green-500 text-white hover:bg-green-600 focus:ring-green-200 dark:focus:ring-green-800 cursor-pointer"
+              >
+                Create Post
+              </Button>
+            }
             {error && <Alert color="failure">{error}</Alert>}
             {success && <Alert color="success">{success}</Alert>}
           </form>
