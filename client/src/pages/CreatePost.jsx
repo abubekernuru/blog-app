@@ -2,6 +2,7 @@ import { Button, FileInput, Select, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'; // or your preferred theme
+import { useNavigate } from 'react-router-dom';
 
 
 function CreatePost() {
@@ -9,7 +10,9 @@ function CreatePost() {
 const [imageFile, setImageFile] = useState(null);
 const [imagePreview, setImagePreview] = useState(null);
 const [imageUrl, setImageUrl] = useState(null);
-const [formData, setFormData] = useState({});
+const [formData, setFormData] = useState({ category: 'uncategorized' });
+const [publishError, setPublishError] = useState(null);
+const navigate = useNavigate();
 
 
 const handleFileChange = (e) => {
@@ -56,17 +59,48 @@ const handleUploadImage = async () => {
       }));
     }
   } catch (error) {
-    console.error(error);
+    setPublishError('Image upload failed. Please try again.', error.message);
   }
 };
+
+const handleChange = (e)=>{
+  if(e.target.id === 'title' || e.target.id === 'category'){
+    return setFormData((prev)=>({
+      ...prev,
+      [e.target.id]: e.target.value
+    }))
+  }
+}
+
+const handleSubmit = async (e)=>{
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/post/createpost', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+    const data = await res.json();
+    console.log(data);
+    if(data.success === false){
+      return setPublishError(data.message)
+    }
+    navigate(`/post/${data.slug}`)
+  } catch (error) {
+    console.log(error)
+  }
+}
+console.log(formData)
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Create Post</h1>
-      <form className='flex flex-col gap-4'>
+      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-        <TextInput type='text' placeholder='Title' id='title' required className='flex-1'/>
-          <Select>
+        <TextInput type='text' placeholder='Title' id='title' onChange={(e)=>handleChange(e)} required className='flex-1'/>
+          <Select id='category' required className='w-48' onChange={(e)=>handleChange(e)}>
             <option value='uncategorized'>Select a category</option>
             <option value='tech'>Technology</option>
             <option value='design'>Design</option>
@@ -125,8 +159,8 @@ const handleUploadImage = async () => {
   )}
 
 </div>
-        <ReactQuill theme="snow" placeholder='Write your post content here...' className='h-72 mb-12'/>
-        <Button type='button' className='bg-linear-to-r from-purple-500 to-pink-500 text-white hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer'>
+        <ReactQuill onChange={(value)=>setFormData((prev)=>({...prev, content: value}))} id='content' theme="snow" placeholder='Write your post content here...' className='h-72 mb-12'/>
+        <Button type='submit' className='bg-linear-to-r from-purple-500 to-pink-500 text-white hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer'>
           Publish
         </Button>
       </form>
