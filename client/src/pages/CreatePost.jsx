@@ -1,4 +1,4 @@
-import { Button, FileInput, Select, TextInput } from 'flowbite-react'
+import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css'; // or your preferred theme
@@ -12,6 +12,7 @@ const [imagePreview, setImagePreview] = useState(null);
 const [imageUrl, setImageUrl] = useState(null);
 const [formData, setFormData] = useState({ category: 'uncategorized' });
 const [publishError, setPublishError] = useState(null);
+const [uploading, setUploading] = useState(false);
 const navigate = useNavigate();
 
 
@@ -75,6 +76,7 @@ const handleChange = (e)=>{
 const handleSubmit = async (e)=>{
   e.preventDefault();
   try {
+    setUploading(true)
     const res = await fetch('/api/post/createpost', {
       method: 'POST',
       headers: {
@@ -87,9 +89,11 @@ const handleSubmit = async (e)=>{
     if(data.success === false){
       return setPublishError(data.message)
     }
+    setUploading(false)
     navigate(`/post/${data.slug}`)
   } catch (error) {
-    console.log(error)
+    setUploading(false)
+    setPublishError('Post creation failed. Please try again.', error.message);
   }
 }
 console.log(formData)
@@ -161,9 +165,21 @@ console.log(formData)
 </div>
         <ReactQuill onChange={(value)=>setFormData((prev)=>({...prev, content: value}))} id='content' theme="snow" placeholder='Write your post content here...' className='h-72 mb-12'/>
         <Button type='submit' className='bg-linear-to-r from-purple-500 to-pink-500 text-white hover:bg-linear-to-l focus:ring-purple-200 dark:focus:ring-purple-800 cursor-pointer'>
-          Publish
+            {uploading ? (
+              <>
+                <Spinner size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+            ) : 'Publish'}
         </Button>
       </form>
+      {publishError && <Alert color="failure" className='mt-4'>
+        <span>
+          <p>
+            {publishError}
+          </p>
+        </span>
+      </Alert> }
     </div>
   )
 }
