@@ -90,7 +90,7 @@ const handleSubmit = async (e)=>{
       body: JSON.stringify(formData),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     if(data.success === false){
       return setPublishError(data.message)
     }
@@ -101,7 +101,7 @@ const handleSubmit = async (e)=>{
     setPublishError('Post creation failed. Please try again.', error.message);
   }
 }
-console.log(formData)
+// console.log(formData)
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>

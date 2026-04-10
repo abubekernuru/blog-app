@@ -4,6 +4,6 @@ const { createPost, getPosts } = require('../controllers/post.controller.js');
 const router = express.Router();
 
 router.post('/createpost', verifyToken, createPost);
-router.get('/getpost', getPosts);
+router.get('/getposts', getPosts);
 
 module.exports = router;
