@@ -4,6 +4,7 @@ import {useSelector} from 'react-redux';
 import { Link } from 'react-router-dom';
 function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore] = useState(false)
   const {currentUser} = useSelector((state) => state.user);
   console.log(userPosts)
   useEffect(() => {
@@ -25,6 +26,7 @@ function DashPosts() {
   }, [currentUser._id])
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+      {currentUser?.isAdmin && userPosts.length > 0 ? 
       <Table hoverable className='shadow-md'>
         <TableHead>
           <TableRow>
@@ -61,6 +63,7 @@ function DashPosts() {
         )}
         </TableBody>
       </Table>
+      : <h2 className='text-2xl font-bold mb-4'>You are not authorized to view this page</h2>}
     </div>
   )
 }
