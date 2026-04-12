@@ -4,18 +4,23 @@ import {useSelector} from 'react-redux';
 import { Link } from 'react-router-dom';
 function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
-  const [showMore, setShowMore] = useState(false)
+  const [showMore, setShowMore] = useState(true)
   const {currentUser} = useSelector((state) => state.user);
-  console.log(userPosts)
+  // console.log(userPosts)
   useEffect(() => {
     const fetchPosts = async () => {
     try {
-        const response = await fetch(`/api/post/getposts?userId=${currentUser._id}`,{
+        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`,{
           credentials: 'include'
         });
-        const data = await response.json();
-        setUserPosts(data.posts);
-        console.log(data.posts)
+        const data = await res.json();
+        if(res.ok){
+          setUserPosts(data.posts);
+          console.log(data.posts)
+          if(data.posts.length < 9){
+            setShowMore(false)
+          }
+        }
     } catch (error) {
       console.log(error)
     }
@@ -23,10 +28,29 @@ function DashPosts() {
   if(currentUser?.isAdmin){
           fetchPosts();
     }
-  }, [currentUser._id])
+  }, [currentUser?._id])
+
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+    try {
+      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,{
+          credentials: 'include'
+        });
+      const data = await res.json();
+      if(res.ok){
+        setUserPosts((prev)=>[...prev, ...data.posts])
+        if(data.posts.length < 9){
+          setShowMore(false)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser?.isAdmin && userPosts.length > 0 ? 
+      <>
       <Table hoverable className='shadow-md'>
         <TableHead>
           <TableRow>
@@ -63,6 +87,15 @@ function DashPosts() {
         )}
         </TableBody>
       </Table>
+      {showMore && (
+            <button
+              onClick={handleShowMore}
+              className='w-full text-teal-600 self-center text-sm py-7'
+            >
+              Show more
+            </button>
+          )}
+      </>
       : <h2 className='text-2xl font-bold mb-4'>You are not authorized to view this page</h2>}
     </div>
   )
