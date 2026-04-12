@@ -77,7 +77,7 @@ const getPosts = async (req, res, next)=>{
 
 const deletepost = async (req, res, next)=>{
     if(!req.user.isAdmin){
-        return errorHandler(403, "You are not allowed to delete this post")
+        return next(errorHandler(403, "You are not allowed to delete this post"))
     }
     try {
         await Post.findByIdAndDelete(req.params.postId);
