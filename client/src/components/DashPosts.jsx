@@ -117,7 +117,9 @@ function DashPosts() {
                     }>Delete</span>
             </TableCell>
             <TableCell>
-              <span className='font-medium text-teal-500 hover:underline cursor-pointer'>Edit</span>
+              <Link to={`/updatepost/${post._id}`} className='font-medium text-teal-500 hover:underline cursor-pointer'>
+              <span>Edit</span>
+              </Link>
             </TableCell>
           </TableRow>
         )}
