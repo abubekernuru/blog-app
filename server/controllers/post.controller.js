@@ -1,5 +1,5 @@
 const Post = require("../model/post.model");
-const errorHandler = require("../utils/error")
+const errorHandler = require("../utils/error.js")
 
 
 const createPost = async (req, res, next) => {
@@ -75,4 +75,16 @@ const getPosts = async (req, res, next)=>{
     }
 }
 
-module.exports = {createPost, getPosts}
+const deletepost = async (req, res, next)=>{
+    if(!req.user.isAdmin){
+        return errorHandler(403, "You are not allowed to delete this post")
+    }
+    try {
+        await Post.findByIdAndDelete(req.params.postId);
+        res.status(200).json("Post has been deleted succefully!")
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {createPost, getPosts, deletepost}
