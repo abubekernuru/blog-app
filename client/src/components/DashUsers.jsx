@@ -38,42 +38,40 @@ function DashUsers() {
   }, [currentUser?._id])
 
   const handleShowMore = async () => {
-    setLoadingUsers(true);
     const startIndex = users.length;
     try {
-      const res = await fetch(`/api/post/getusers?startIndex=${startIndex}`,{
+      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`,{
           credentials: 'include'
         });
       const data = await res.json();
       if(res.ok){
         setUsers((prev)=>[...prev, ...data.users])
-        setLoadingUsers(false);
+
         if(data.users.length < 9){
           setShowMore(false)
         }
       }
     } catch (error) {
       console.log(error)
-      setLoadingUsers(false);
     }
   }
   const handleDeleteUser = async ()=>{
-  //   setShowModal(false)
-  //   try {
-  //     const res = await fetch(`/api/post/deletepost/${usersIdToDelete}`, {
-  //       method: 'DELETE',
-  //       credentials: 'include'
-  //     })
-  //     const data = await res.json();
-  //     if(res.ok){
-  //       setShowModal(false);
-  //       setUsers((prev)=>prev.filter((post)=>post._id !== usersIdToDelete))
-  //     }else{
-  //       console.log(data.message)
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
+    setShowModal(false)
+    try {
+      const res = await fetch(`/api/user/deleteuser/${usersIdToDelete}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+      const data = await res.json();
+      if(res.ok){
+        setShowModal(false);
+        setUsers((prev)=>prev.filter((user)=>user._id !== usersIdToDelete))
+      }else{
+        console.log(data.message)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   if(loadingUsers){
     // Larger spinner with text below
@@ -112,7 +110,7 @@ function DashUsers() {
               </Link>
             </TableCell>
             <TableCell>{user.email}</TableCell>
-            <TableCell>{user.isAdmin}</TableCell>
+            <TableCell>{user.isAdmin ? 'Yes': 'No'}</TableCell>
             <TableCell>
               <span className='font-medium text-red-500 hover:underline cursor-pointer'  
                 onClick={()=>{

@@ -127,4 +127,18 @@ const getUsers = async (req, res, next) => {
     }
 }
 
-module.exports = { test, generateSignature, updateUser, deleteUser, signoutUser, getUsers };
+const deleteUsers = async (req, res, next)=>{
+    if(!req.user.isAdmin){
+        return next(errorHandler(403, "You are not allowed to delete users!"))
+    }
+    try {
+        const {userId} = req.params;
+        await User.findByIdAndDelete(userId);
+        res.status(200).json('User has been deleted successfully');
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+module.exports = { test, generateSignature, updateUser, deleteUser, signoutUser, getUsers, deleteUsers };
