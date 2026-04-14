@@ -1,5 +1,5 @@
 import { Sidebar, SidebarItems, SidebarItemGroup, SidebarItem } from 'flowbite-react'
-import { HiUser, HiArrowSmRight, HiDocumentText } from "react-icons/hi"
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from "react-icons/hi"
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { Link } from 'react-router-dom'
@@ -42,11 +42,21 @@ function DashSidebar() {
               Profile
             </SidebarItem>
           </Link>
-          <Link to={"/dashboard?tab=posts"}>
-            <SidebarItem active={tab === "posts"} icon={HiDocumentText}  labelColor='dark' as={'div'}>
-              Posts
-            </SidebarItem>
-          </Link>
+          {currentUser.isAdmin && 
+          (
+          <>
+            <Link to={"/dashboard?tab=posts"}>
+              <SidebarItem active={tab === "posts"} icon={HiDocumentText}  labelColor='dark' as={'div'}>
+                Posts
+              </SidebarItem>
+            </Link>
+            <Link to={"/dashboard?tab=users"}>
+              <SidebarItem active={tab === "users"} icon={HiOutlineUserGroup}  labelColor='dark' as={'div'}>
+                Users
+              </SidebarItem>
+            </Link>
+          </>
+          )}
           <SidebarItem  icon={HiArrowSmRight} className='cursor-pointer' onClick={handleSignout}>
             Sign Out
           </SidebarItem>
