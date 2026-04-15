@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { Button, Spinner } from 'flowbite-react';
+import CallToAction from '../components/CallToAction';
 
 function Post() {
     const [loading, setLoading] = useState();
@@ -36,7 +37,7 @@ function Post() {
             </div>
     }
     return (
-    <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
+    <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen '>
         <h1 className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>{post && post.title}</h1>
         <Link 
             to={`/search?category=${post && post.category}`}
@@ -64,6 +65,9 @@ function Post() {
         <div 
             className='p-3 max-w-2xl mx-auto w-full post-content'
             dangerouslySetInnerHTML={{__html: post && post.content}}>
+        </div>
+        <div>
+            <CallToAction />
         </div>
         </main>
     )
