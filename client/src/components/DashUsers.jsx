@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import {useSelector} from 'react-redux';
 import { Link } from 'react-router-dom';
+import { FaTimes, FaCheck } from 'react-icons/fa';
 function DashUsers() {
   const [users, setUsers] = useState([]);
   const [showMore, setShowMore] = useState(true)
@@ -101,7 +102,7 @@ function DashUsers() {
             <TableCell>{new Date(user.updatedAt).toLocaleDateString()}</TableCell>
             <TableCell>
               <Link to={`/user/${user.slug}`}>
-                <img src={user.avatar} alt={user.username} className='w-20 h-10 object-cover rounded bg-gray-500' />
+                <img src={user.avatar} alt={user.username} className='w-10 h-10 rounded-full object-cover bg-gray-500' />
               </Link>
             </TableCell>
             <TableCell>
@@ -110,7 +111,7 @@ function DashUsers() {
               </Link>
             </TableCell>
             <TableCell>{user.email}</TableCell>
-            <TableCell>{user.isAdmin ? 'Yes': 'No'}</TableCell>
+            <TableCell>{user.isAdmin ? <FaCheck className='text-green-500' />: <FaTimes className='text-red-500' />}</TableCell>
             <TableCell>
               <span className='font-medium text-red-500 hover:underline cursor-pointer'  
                 onClick={()=>{
