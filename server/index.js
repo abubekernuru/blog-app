@@ -18,9 +18,11 @@ dotenv.config();
 const userRoute = require('./routes/user.route.js');
 const authRoute = require('./routes/auth.route.js')
 const postRoute = require('./routes/post.route.js')
+const commentRoute = require('./routes/comment.route.js')
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/post', postRoute);
+app.use('/api/comment', commentRoute);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(()=>{
