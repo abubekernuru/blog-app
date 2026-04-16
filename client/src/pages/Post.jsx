@@ -71,7 +71,7 @@ function Post() {
         <div>
             <CallToAction />
         </div>
-        <Comment postId={post._id}/>
+        <Comment postId={post && post._id}/>
         </main>
     )
 }

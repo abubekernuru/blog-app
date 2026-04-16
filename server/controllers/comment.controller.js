@@ -29,22 +29,10 @@ const postComment = async (req, res, next )=> {
 }
 
 const getComment = async (req, res, next)=> {
-    const {postId, userId} = req.params;
-        if(req.user.id !== userId ){
-        return next(errorHandler(403, "You must be signed in to comment on a post!"))
-    }
+    const {postId} = req.params;
     try {
-        const fetchComments = await Comment.find({postId})
-            const totalComments = await Post.countDocuments();
-        
-            const now = new Date();
-        
-            const oneMonthAgo = new Date(
-                now.getFullYear(),
-                now.getMonth() - 1,
-                now.getDate()
-            );
-            res.status(200).json(fetchComments, totalComments, oneMonthAgo)
+        const fetchComments = await Comment.find({postId}).sort({createdAt: -1})
+            res.status(200).json(fetchComments)
     } catch (error) {
         next(error)
     }

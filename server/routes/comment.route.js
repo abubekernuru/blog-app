@@ -6,6 +6,6 @@ const router = express.Router();
 
 
 router.post('/createcomment', verifyToken, postComment);
-router.get('/getcomment/:postId/:userId', verifyToken, getComment);
+router.get('/getcomment/:postId', getComment);
 
 module.exports = router;
