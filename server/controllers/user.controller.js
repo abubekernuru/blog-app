@@ -141,4 +141,16 @@ const deleteUsers = async (req, res, next)=>{
 
 }
 
-module.exports = { test, generateSignature, updateUser, deleteUser, signoutUser, getUsers, deleteUsers };
+const getUser = async (req, res, next)=> {
+    const {userId} = req.params;
+    try {
+        const gotUser = await User.findById(userId);
+        if (!gotUser) return next(errorHandler(404, 'User not found'));
+        const {password, ...rest} = gotUser._doc;
+        res.status(200).json(rest)
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { test, generateSignature, updateUser, deleteUser, signoutUser, getUsers, deleteUsers, getUser };
