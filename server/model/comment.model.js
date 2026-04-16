@@ -12,6 +12,10 @@ const commentSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true
+    },
+    numberOfLikes: {
+        type: Number,
+        default: 0
     }
 }, {timestamps: true});
 

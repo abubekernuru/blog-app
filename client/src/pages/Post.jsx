@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react'
-import { Link, useParams } from 'react-router-dom'
+import {useEffect, useState} from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Button, Spinner } from 'flowbite-react';
 import CallToAction from '../components/CallToAction';
+import Comment from '../components/Comment';
 
 function Post() {
     const [loading, setLoading] = useState();
@@ -36,6 +37,7 @@ function Post() {
                 <Spinner size='xl' /> 
             </div>
     }
+    // console.log(post)
     return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen '>
         <h1 className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>{post && post.title}</h1>
@@ -69,6 +71,7 @@ function Post() {
         <div>
             <CallToAction />
         </div>
+        <Comment postId={post._id}/>
         </main>
     )
 }
