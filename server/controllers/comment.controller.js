@@ -62,4 +62,50 @@ const likeComment = async (req, res, next) => {
     }
 }
 
-module.exports = {postComment, getComment, likeComment}
+const editComment = async (req, res, next) => {
+    try {
+        const {commentId} = req.params;
+        const commentToEdit = await Comment.findById(commentId);
+
+        if (!commentToEdit) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        const isOwner = commentToEdit.userId === req.user.id;
+        const isAdmin = req.user.isAdmin;
+
+        if (!isOwner && !isAdmin) {
+            return res.status(403).json({ message: "You are not allowed to edit this comment" });
+        }
+        const comment = await Comment.findByIdAndUpdate(commentId, {
+            $set:{
+                comment: req.body.comment
+            }
+        }, {new: true});
+        res.status(200).json(comment);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const deleteComment = async (req, res, next)=>{
+    try {    
+        const {commentId} = req.params;
+            const commentToDelete = await Comment.findById(commentId);
+    
+            if (!commentToDelete) {
+                return res.status(404).json({ message: "Comment not found" });
+            }
+            const isOwner = commentToDelete.userId === req.user.id;
+            const isAdmin = req.user.isAdmin;
+    
+            if (!isOwner && !isAdmin) {
+                return res.status(403).json({ message: "You are not allowed to delete this comment" });
+            }
+            await Comment.findByIdAndDelete(commentId);
+            res.status(200).json({ message: "Comment deleted successfully!" })
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {postComment, getComment, likeComment, editComment, deleteComment}
