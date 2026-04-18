@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Button, Spinner } from 'flowbite-react';
 import CallToAction from '../components/CallToAction';
-import Comment from '../components/Comment';
+import CommentSection from '../components/CommentSection.jsx';
 
 function Post() {
     const [loading, setLoading] = useState();
@@ -71,7 +71,7 @@ function Post() {
         <div>
             <CallToAction />
         </div>
-        <Comment postId={post && post._id}/>
+        <CommentSection postId={post && post._id}/>
         </main>
     )
 }

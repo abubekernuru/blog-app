@@ -1,174 +1,153 @@
-import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Textarea, Button, Alert } from 'flowbite-react';
-import { useEffect, useState } from 'react';
-import CommentList from './CommentList.jsx';
+import React, { useEffect, useState } from 'react'
+import moment from 'moment';
+import { FaThumbsUp } from 'react-icons/fa';
+import { Button, Modal, ModalBody, ModalHeader, Textarea } from 'flowbite-react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { useNavigate } from 'react-router-dom';
 
-
-function Comment({postId}) {
-    const { currentUser } = useSelector((state)=>state.user);
-    const [comment, setComment] = useState('');
-    const [commentError, setCommentError] = useState(null);
-    const [comments, setComments] = useState([]);
+function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
+    const [user, setUser] = useState({})
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedComment, setEditedComment] = useState(comment.comment);   
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setCommentError(null)
-        if(comment.length > 200){
-            return;
+    useEffect(()=>{
+        const getUser = async ()=>{
+            try {
+                const res = await fetch(`/api/user/getuser/${comment.userId}`);
+                const data = await res.json();
+                if(res.ok){
+                    setUser(data)
+                }
+            } catch (error) {
+                console.log(error)
+            }
         }
+        getUser();
+    },[comment])
+    // console.log(user)
+
+    const handleEdit = async ()=>{
+        setIsEditing(true);
+        setEditedComment(comment.comment);
+    }
+    const handleSave = async ()=>{
         try {
-            const res = await fetch(`/api/comment/createcomment`,{
-                method: 'POST',
+            const res = await fetch(`/api/comment/editcomment/${comment._id}`,{
+                method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify({
-                    comment,
-                    userId: currentUser._id,
-                    postId
+                    comment: editedComment
                 })
             })
             const data = await res.json();
-            // console.log(data)
             if(res.ok){
-                setComment('')
-                setComments([data, ...comments]);
-                setCommentError(null)
-            }
-            if(!res.ok){
-                setCommentError(data.message)
+                setIsEditing(false);
+                onEdit(comment._id, editedComment);
             }
         } catch (error) {
-            console.log(error)
-            setCommentError(error.message)
+            console.error('Error saving comment:', error);
         }
     }
-
-    const handleChange = async (e)=> {
-        setComment(e.target.value)
-    }
-// console.log(comment)
-useEffect(()=>{
-    const getComments = async ()=>{
+    const handleDelete = async ()=>{
         try {
-            setCommentError(null)
-            const res = await fetch(`/api/comment/getcomment/${postId}`);
+            if (!currentUser) {
+                navigate('/signin');
+                return;
+            }
+            setShowModal(false);
+            const res = await fetch(`/api/comment/deletecomment/${comment._id}`,{
+                method: 'DELETE',
+                credentials: 'include',
+            })
             const data = await res.json();
             if(res.ok){
-                setComments(data);
-            }
-            if(!res.ok){
-                setCommentError(data.message)
+                onDelete(comment._id);
+                setShowModal(false);
             }
         } catch (error) {
-            console.log(error.message)
+            console.error('Error deleting comment:', error);
         }
     }
-    getComments();
-},[postId])
-// console.log(comments)
-const handleLike = async (commentId) => {
-    try {
-        if(!currentUser){
-            navigate('/signin');
-            return;
-        }
-        const res = await fetch(`/api/comment/likecomment/${commentId}`,{
-            method: 'PUT',
-            credentials: 'include'
-        });
-        const data = await res.json();
-        if(res.ok){
-            // Update the comment's like count
-            setComments(comments.map(comment => {
-                if(comment._id === commentId){
-                    return {...comment, likes: data.likes, numberOfLikes: data.numberOfLikes};
-                }
-                return comment;
-            }));
-        }
-    } catch (error) {
-        setCommentError(error.message)
-    }
-}
-return (
-    <div className='max-w-2xl mx-auto w-full p-3'>
-        {currentUser ? (
-        <div className='flex items-center gap-1 my-5 text-gray-500 text-sm'>
-            <p>Signed in as:</p>
-            <img
-                className='h-5 w-5 object-cover rounded-full'
-                src={currentUser.avatar}
-                alt='profile picture'
-            />
-            <Link
-            to={'/dashboard?tab=profile'}
-            className='text-xs text-cyan-600 hover:underline'
-            >
-                @{currentUser.username}
-            </Link>
+  return (
+    <div className='flex p-4 border-b dark:border-gray-600 text-sm'>
+        <div className='flex-shrink-0 mr-3'>
+            <img src={user.avatar} alt={user.username} className='w-10 h-10 rounded-full bg-gray-200' />
         </div>
-        ) : (
-            <div className='text-sm text-teal-500 my-5 flex gap-1'>
-                    You must be signed in to comment.
-            <Link className='text-blue-500 hover:underline' to={'/sign-in'}>
-                Sign In
-            </Link>
+        
+        <div className='flex-1'>
+            <div className='flex items-center mb-1'>
+                <span className='font-bold mr-1 text-xs truncate'>{user ? `@${user.username}`: 'Anonymous user'}</span>
+                <span className='text-gray-500 text-xs'>
+                {moment(comment.createdAt).fromNow()}
+                </span>
             </div>
-        )}
-    {currentUser &&
-        <form className='border border-teal-500 rounded-md p-3' onSubmit={handleSubmit}>
+            {isEditing ? (
+            <>
             <Textarea
-                placeholder='Add a comment...'
-                rows='3'
-                maxLength='200'
-                onChange={(e)=>handleChange(e)}
-                value={comment}
+                value={editedComment}
+                onChange={(e) => setEditedComment(e.target.value)}
+                className='w-full'
             />
-            <div className='flex justify-between items-center mt-5'>
-                <p className='text-gray-500 text-xs'>
-                {200 - comment.length} characters remaining
-            </p>
-            <Button
-                className="cursor-pointer border border-purple-500 text-purple-700 px-4 py-2 rounded-md transition-all duration-200 bg-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white hover:border-transparent"
-                type='submit'
+            <div className='flex gap-2 mt-2 items-center justify-end'>
+                <Button className='cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 text-white' size='sm'
+                    onClick={handleSave}
+                >Save</Button>
+                <Button className='outline outline-purple-500 outline-2 cursor-pointer hover:bg-gradient-to-r from-blue-500 to-purple-500 hover:text-white dark:text-black' size='xs'
+                    onClick={()=>setIsEditing(false)}
+                >Cancel</Button>
+            </div>
+            </>) : (<>
+        <p className='text-gray-500 pb-2'>{comment.comment}</p>
+        <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
+            <button
+                onClick={() => onLike(comment._id)}
+                className={`hover:text-blue-500 cursor-pointer ${currentUser && comment.likes.includes(currentUser._id) ? '!text-blue-500' : '!text-gray-500'}`}
             >
-                Submit
-            </Button>
+                <FaThumbsUp />
+            </button>
+            <p className='text-gray-400 text-xs ml-1'>{comment.numberOfLikes > 0 &&
+                comment.numberOfLikes +
+                    ' ' +
+                (comment.numberOfLikes === 1 ? 'like' : 'likes')}
+            </p>
+            {currentUser &&
+            (currentUser._id === comment.userId || currentUser.isAdmin) && (
+            <div className='flex gap-3 text-gray-400 text-xs ml-1'>
+                <button className='hover:text-blue-500 cursor-pointer' onClick={handleEdit}>
+                    Edit
+                </button>
+                <button className='hover:text-red-500 cursor-pointer' onClick={()=>setShowModal(true)}>
+                    Delete
+                </button>
             </div>
-                {commentError && 
-                <Alert className='mt-5' color='failure'>
-                        {commentError}
-                </Alert>
-                }
-        </form>
-    }
-    {comments.length === 0 ? (
-        <p className='text-sm my-5'>No comments yet!</p>
-    ):(
-        <>       
-        <div className='text-sm my-5 flex items-center gap-1'>
-            <p>Comments</p>
-            <div className='border border-gray-500 py-1 px-2'>
-                {comments.length}
-            </div>
+            )}           
         </div>
-        {
-            comments.map((comment)=> (
-                <CommentList 
-                key={comment._id}
-                comment={comment}
-                onLike={handleLike}
-                currentUser={currentUser}
-                />
-            ))
-        }
-        </>
-    )}
+        </>)}
         </div>
-)  
+        <Modal show={showModal} onClose={()=>setShowModal(false)} size="sm" popup={true}>
+            <ModalHeader />
+            <ModalBody>
+                <div className='text-center'>
+                <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto mt-3'/>
+                <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-300'>Are you sure you want to delete your comment?</h3>
+                <div className='flex justify-center gap-6'>
+                    <Button color="failure" className='bg-red-600 text-white cursor-pointer' onClick={handleDelete}>
+                    Yes
+                    </Button>
+                    <Button color="gray" onClick={()=>setShowModal(false)} className='cursor-pointer outline outline-gray-500 outline-2 hover:bg-gray-500 hover:text-white'>
+                    Cancel
+                    </Button>
+                </div>
+                </div>
+            </ModalBody>
+        </Modal>
+    </div>
+  )
 }
 
-export default Comment
+export default Comment;
