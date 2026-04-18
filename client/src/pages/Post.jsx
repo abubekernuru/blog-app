@@ -4,10 +4,12 @@ import { useSelector } from 'react-redux';
 import { Button, Spinner } from 'flowbite-react';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection.jsx';
+import PostCard from '../components/PostCard.jsx';
 
 function Post() {
-    const [loading, setLoading] = useState();
+    const [loading, setLoading] = useState(true);
     const [post, setPost] = useState();
+    const [recentPosts, setRecentPosts] = useState([])
     const { currentUser } = useSelector((state)=>state.user);
     const {postSlug} = useParams();
 
@@ -24,6 +26,10 @@ function Post() {
             setLoading(false);
             // console.log(data.posts)
         }
+        if(!res.ok){
+            setLoading(false);
+            return;
+            }
     } catch (error) {
         console.log(error)
         setLoading(false);
@@ -31,7 +37,28 @@ function Post() {
     }
         fetchPosts();
     }, [postSlug])
-    if(loading){
+
+    useEffect(()=>{
+        const fetchPosts = async()=> {
+            try {
+                const res = await fetch(`/api/post/getposts?limit=3`,{
+                    creadentials: 'include'
+                })
+                const data = await res.json();
+                if(res.ok){
+                    setRecentPosts(data.posts)
+                }
+                if(!res.ok){
+                    setLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchPosts();
+    },[])
+        if(loading){
     // Larger spinner with text below
     return <div className='flex items-center justify-center min-h-screen'>
                 <Spinner size='xl' /> 
@@ -61,7 +88,7 @@ function Post() {
             </span>
             <span 
                 className='italic'>
-                {post && (post.content.length / 1000).toFixed(0)} mins read
+                {post && (post?.content?.length / 1000).toFixed(0)} mins read
             </span>
         </div>
         <div 
@@ -72,6 +99,15 @@ function Post() {
             <CallToAction />
         </div>
         <CommentSection postId={post && post._id}/>
+
+        <div className='flex flex-col justify-center items-center mb-5'>
+                <h1 className='text-xl mt-5'>Recent articles</h1>
+            <div className='flex flex-wrap gap-5 mt-5 justify-center'>
+            {recentPosts &&
+                recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+            </div>
+        </div>
+
         </main>
     )
 }
