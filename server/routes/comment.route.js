@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/createcomment', verifyToken, postComment);
 router.get('/getcomment/:postId', getComment);
 router.put('/editcomment/:commentId', verifyToken, editComment);
-router.put('/deletecomment/:commentId', verifyToken, deleteComment);
+router.delete('/deletecomment/:commentId', verifyToken, deleteComment);
 router.put('/likecomment/:commentId', verifyToken, likeComment);
 
 module.exports = router;
