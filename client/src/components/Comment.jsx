@@ -1,14 +1,16 @@
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Textarea, Button, Alert } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import CommentList from './CommentList.jsx';
+
 
 function Comment({postId}) {
     const { currentUser } = useSelector((state)=>state.user);
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,6 +69,30 @@ useEffect(()=>{
     getComments();
 },[postId])
 // console.log(comments)
+const handleLike = async (commentId) => {
+    try {
+        if(!currentUser){
+            navigate('/signin');
+            return;
+        }
+        const res = await fetch(`/api/comment/likecomment/${commentId}`,{
+            method: 'PUT',
+            credentials: 'include'
+        });
+        const data = await res.json();
+        if(res.ok){
+            // Update the comment's like count
+            setComments(comments.map(comment => {
+                if(comment._id === commentId){
+                    return {...comment, likes: data.likes, numberOfLikes: data.numberOfLikes};
+                }
+                return comment;
+            }));
+        }
+    } catch (error) {
+        setCommentError(error.message)
+    }
+}
 return (
     <div className='max-w-2xl mx-auto w-full p-3'>
         {currentUser ? (
@@ -134,6 +160,8 @@ return (
                 <CommentList 
                 key={comment._id}
                 comment={comment}
+                onLike={handleLike}
+                currentUser={currentUser}
                 />
             ))
         }
