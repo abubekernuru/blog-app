@@ -38,6 +38,22 @@ const getComment = async (req, res, next)=> {
     }
 }
 
+const getComments = async (req, res, next)=> {
+    const {postId} = req.params;
+    try {
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;
+        const fetchComments = await Comment.find()
+            .sort({createdAt: -1})
+            .skip(startIndex)
+            .limit(limit)
+            res.status(200).json(fetchComments)
+    } catch (error) {
+        next(error)
+    }
+}
+
 const likeComment = async (req, res, next) => {
     try {
         const {commentId} = req.params;
@@ -108,4 +124,4 @@ const deleteComment = async (req, res, next)=>{
     }
 }
 
-module.exports = {postComment, getComment, likeComment, editComment, deleteComment}
+module.exports = {postComment, getComment, likeComment, editComment, deleteComment, getComments}

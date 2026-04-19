@@ -1,5 +1,5 @@
 import { Sidebar, SidebarItems, SidebarItemGroup, SidebarItem } from 'flowbite-react'
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from "react-icons/hi"
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiAnnotation } from "react-icons/hi"
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { Link } from 'react-router-dom'
@@ -53,6 +53,11 @@ function DashSidebar() {
             <Link to={"/dashboard?tab=users"}>
               <SidebarItem active={tab === "users"} icon={HiOutlineUserGroup}  labelColor='dark' as={'div'}>
                 Users
+              </SidebarItem>
+            </Link>
+            <Link to={"/dashboard?tab=comments"}>
+              <SidebarItem active={tab === "comments"} icon={HiAnnotation}  labelColor='dark' as={'div'}>
+                Comments
               </SidebarItem>
             </Link>
           </>
