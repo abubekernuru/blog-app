@@ -11,7 +11,7 @@ function DashUsers() {
   const [usersIdToDelete, setUsersIdToDelete] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const {currentUser} = useSelector((state) => state.user);
-  // console.log(users)
+
   useEffect(() => {
     const fetchPosts = async () => {
       setLoadingUsers(true);
@@ -23,7 +23,7 @@ function DashUsers() {
         if(res.ok){
           setUsers(data.users);
           setLoadingUsers(false);
-          console.log(data.users)
+          // console.log(data.users)
           if(data.users.length < 9){
             setShowMore(false)
           }
@@ -101,14 +101,10 @@ function DashUsers() {
           <TableRow key={user._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
             <TableCell>{new Date(user.updatedAt).toLocaleDateString()}</TableCell>
             <TableCell>
-              <Link to={`/user/${user.slug}`}>
                 <img src={user.avatar} alt={user.username} className='w-10 h-10 rounded-full object-cover bg-gray-500' />
-              </Link>
             </TableCell>
             <TableCell>
-              <Link to={`/user/${user.slug}`} className='font-medium text-gray-900 dark:text-white'>
                 {user.username}
-              </Link>
             </TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.isAdmin ? <FaCheck className='text-green-500' />: <FaTimes className='text-red-500' />}</TableCell>
@@ -137,10 +133,10 @@ function DashUsers() {
           <ModalBody>
             <div className='text-center'>
               <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto mt-3'/>
-              <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-300'>Are you sure you want to delete this post? This action cannot be undone.</h3>
+              <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-300'>Are you sure you want to delete this user? This action cannot be undone.</h3>
               <div className='flex justify-center gap-6'>
                 <Button color="failure" className='bg-red-600 text-white cursor-pointer' onClick={handleDeleteUser}>
-                  Yes, Delete The Post
+                  Yes, Delete The User
                 </Button>
                 <Button color="gray" onClick={()=>setShowModal(false)}>
                   Cancel

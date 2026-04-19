@@ -21,10 +21,10 @@ function DashUsers() {
         });
         const data = await res.json();
         if(res.ok){
-            setComments(data);
+            setComments(data.comments);
             setLoadingComments(false);
             // console.log(data)
-            if(data.length < 9){
+            if(data.comments.length < 9){
             setShowMore(false)
             }
         }
@@ -46,7 +46,7 @@ const handleShowMore = async () => {
         });
         const data = await res.json();
         if(res.ok){
-        setComments((prev)=>[...prev, ...data])
+        setComments((prev)=>[...prev, ...data.comments])
 
         if(data.length < 9){
             setShowMore(false)

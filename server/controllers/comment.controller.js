@@ -39,16 +39,29 @@ const getComment = async (req, res, next)=> {
 }
 
 const getComments = async (req, res, next)=> {
-    const {postId} = req.params;
     try {
         const startIndex = parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9;
         const sortDirection = req.query.order === 'asc' ? 1 : -1;
         const fetchComments = await Comment.find()
-            .sort({createdAt: -1})
+            .sort({sortDirection})
             .skip(startIndex)
             .limit(limit)
-            res.status(200).json(fetchComments)
+        const totalComments = await Comment.countDocuments();
+        const now = new Date();
+        const oneMonthAgo = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            now.getDate()
+        )
+        const lastMonthComments = await Comment.countDocuments({
+            createdAt: { $gte: oneMonthAgo },
+        })
+            res.status(200).json({
+                comments: fetchComments,
+                totalComments,
+                lastMonthComments
+            })
     } catch (error) {
         next(error)
     }
