@@ -4,7 +4,6 @@ import {HiArrowNarrowUp, HiOutlineAnnotation, HiOutlineDocumentText, HiOutlineUs
 import {Button, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from 'flowbite-react'
 import {Link} from 'react-router-dom'
 
-
 function DashboardComp() {
   const [users, setUsers] = useState([])
   const [posts, setPosts] = useState([])
@@ -62,13 +61,13 @@ function DashboardComp() {
     <div className='p-3 md:mx-auto'>
 
       <div className='flex flex-wrap gap-4 justify-center'>
-        <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
+        <div className='flex flex-col p-3 bg-white dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
           <div className='flex justify-between'>
             <div>
               <h3 className='text-gray-500 text-md uppercase' >Total Users</h3>
               <p>{totalUsers}</p>
             </div>
-              <HiOutlineUserGroup  className='bg-teal-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
+              <HiOutlineUserGroup  className='bg-gradient-to-br from-teal-500 to-emerald-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
             </div>
             <div>
               <span className='text-green-500 flex items-center'>
@@ -78,29 +77,14 @@ function DashboardComp() {
               <div className='text-gray-500'>Last month</div>
           </div>
         </div>
-        <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
-          <div className='flex justify-between'>
-            <div>
-              <h3 className='text-gray-500 text-md uppercase' >Total Posts</h3>
-              <p>{totalPosts}</p>
-            </div>
-              <HiOutlineDocumentText  className='bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
-            </div>
-            <div>
-              <span className='text-green-500 flex items-center'>
-                <HiArrowNarrowUp />
-                {lastMonthPosts}
-              </span>
-              <div className='text-gray-500'>Last month</div>
-          </div>
-        </div>
-        <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
+
+        <div className='flex flex-col p-3 bg-white dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
           <div className='flex justify-between'>
             <div>
               <h3 className='text-gray-500 text-md uppercase' >Total Comments</h3>
               <p>{totalComments}</p>
             </div>
-              <HiOutlineAnnotation  className='bg-amber-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
+              <HiOutlineAnnotation  className='bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
             </div>
             <div>
               <span className='text-green-500 flex items-center'>
@@ -110,12 +94,31 @@ function DashboardComp() {
               <div className='text-gray-500'>Last month</div>
           </div>
         </div>
+
+        <div className='flex flex-col p-3 bg-white dark:bg-slate-800 gap-4 md:w-72 w-full rounded-lg shadow-lg'>
+          <div className='flex justify-between'>
+            <div>
+              <h3 className='text-gray-500 text-md uppercase' >Total Posts</h3>
+              <p>{totalPosts}</p>
+            </div>
+              <HiOutlineDocumentText  className='bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full text-5xl p-3 shadow-lg'/>
+            </div>
+            <div>
+              <span className='text-green-500 flex items-center'>
+                <HiArrowNarrowUp />
+                {lastMonthPosts}
+              </span>
+              <div className='text-gray-500'>Last month</div>
+          </div>
+        </div>
       </div>
+
       <div className='flex flex-wrap gap-4 py-3 mx-auto justify-center'>
-        <div className='flex flex-col w-full md:w-auto shadow-md p-2'>
+
+        <div className='flex flex-col w-full md:w-auto shadow-md'>
           <div className='flex justify-between font-semibold items-center text-sm p-3'>
-            <h1>Recent Users</h1>
-            <Button className='cursor-pointer outline-2 outline-pink-400 hover:bg-gradient-to-r from-purple-500 to-pink-500'>
+            <h1 className='text-gray-800 dark:text-white'>Recent Users</h1>
+            <Button className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0 shadow-md transition-all duration-200'>
               <a href="/dashboard?tab=users">See All</a>
             </Button>
           </div>
@@ -132,42 +135,17 @@ function DashboardComp() {
                   </TableCell>
                   <TableCell>
                     <Link to={`/profile/${user.username}`}>{user.username}</Link>
-                    </TableCell>
-                </TableRow>
-              </TableBody>
-            ))}
-          </Table>
-        </div>
-        <div className='flex flex-col w-full md:w-auto shadow-md p-2'>
-          <div className='flex justify-between font-semibold items-center text-sm p-3'>
-            <h1>Recent Posts</h1>
-            <Button className='cursor-pointer outline-2 outline-pink-400 hover:bg-gradient-to-r from-purple-500 to-pink-500'>
-              <a href="/dashboard?tab=users">See All</a>
-            </Button>
-          </div>
-          <Table hoverable={true} className='text-sm'>
-            <TableHead>
-              <TableHeadCell>Post image</TableHeadCell>
-              <TableHeadCell>Post title</TableHeadCell>
-            </TableHead>
-            {posts.map((post) => (
-              <TableBody key={post._id} className='divide-y'>
-                <TableRow className='bg-white dark:bg-gray-800 dark:border-gray-700 '>
-                  <TableCell>
-                    <img src={post.image} alt={post.title} className='w-14 h-10 rounded-md object-cover bg-gray-500'/>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/post/${post.slug}`} className='line-clamp-1'>{post.title}</Link>
                   </TableCell>
                 </TableRow>
               </TableBody>
             ))}
           </Table>
         </div>
-        <div className='flex flex-col w-full md:w-auto shadow-md p-2'>
+
+        <div className='flex flex-col w-full md:w-auto shadow-md'>
           <div className='flex justify-between font-semibold items-center text-sm p-3'>
-            <h1>Recent Comments</h1>
-            <Button className='cursor-pointer outline-2 outline-pink-400 hover:bg-gradient-to-r from-purple-500 to-pink-500'>
+            <h1 className='text-gray-800 dark:text-white'>Recent Comments</h1>
+            <Button className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0 shadow-md transition-all duration-200'>
               <a href="/dashboard?tab=comments">See All</a>
             </Button>
           </div>
@@ -190,6 +168,34 @@ function DashboardComp() {
             ))}
           </Table>
         </div>
+
+        <div className='flex flex-col w-full md:w-auto shadow-md'>
+          <div className='flex justify-between font-semibold items-center text-sm p-3'>
+            <h1 className='text-gray-800 dark:text-white'>Recent Posts</h1>
+            <Button className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0 shadow-md transition-all duration-200'>
+              <a href="/dashboard?tab=users">See All</a>
+            </Button>
+          </div>
+          <Table hoverable={true} className='text-sm'>
+            <TableHead>
+              <TableHeadCell>Post image</TableHeadCell>
+              <TableHeadCell>Post title</TableHeadCell>
+            </TableHead>
+            {posts.map((post) => (
+              <TableBody key={post._id} className='divide-y'>
+                <TableRow className='bg-white dark:bg-gray-800 dark:border-gray-700 '>
+                  <TableCell>
+                    <img src={post.image} alt={post.title} className='w-14 h-10 rounded-md object-cover bg-gray-500'/>
+                  </TableCell>
+                  <TableCell>
+                    <Link to={`/post/${post.slug}`} className='line-clamp-1'>{post.title}</Link>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ))}
+          </Table>
+        </div>
+
       </div>
     </div>
   )
