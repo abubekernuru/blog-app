@@ -111,9 +111,9 @@ const handleSubmit = async (e)=>{
         <TextInput type='text' placeholder='Title' id='title' onChange={(e)=>handleChange(e)} required className='flex-1'/>
           <Select id='category' required className='w-48' onChange={(e)=>handleChange(e)}>
             <option value='uncategorized'>Select a category</option>
-            <option value='tech'>Technology</option>
-            <option value='design'>Design</option>
-            <option value='history'>History</option>
+            <option value='reactjs'>React.js</option>
+            <option value='nextjs'>Next.js</option>
+            <option value='javascript'>JavaScript</option>
           </Select>
         </div>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-400 border-dotted p-3'>
