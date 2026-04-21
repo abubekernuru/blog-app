@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { signinFailure, signinSuccess } from '../redux/userSlice';
 import { AiFillGoogleCircle } from 'react-icons/ai';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function OAuth() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -15,7 +17,7 @@ const handleGoogleClick = async () => {
     const auth = getAuth(app);
     try {
         const result = await signInWithPopup(auth, provider);
-        const res = await fetch('/api/auth/google',{
+        const res = await fetch(`${apiUrl}/api/auth/google`,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

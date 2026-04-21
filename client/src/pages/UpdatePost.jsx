@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function UpdatePost() {
 
 const [imageFile, setImageFile] = useState(null);
@@ -23,7 +25,7 @@ const { postId } = useParams();
 useEffect(()=>{
   const fetchPost = async()=>{
     try {
-      const res = await fetch(`/api/post/getposts?postId=${postId}`);
+      const res = await fetch(`${apiUrl}/api/post/getposts?postId=${postId}`);
       const data = await res.json();
       // console.log(data.posts[0])
       if(res.ok){
@@ -54,7 +56,7 @@ const handleUploadImage = async () => {
   try {
     setImageUploading(true);
     setImageUploaded(false);
-    const resSign = await fetch('/api/user/sign-image');
+    const resSign = await fetch(`${apiUrl}/api/user/sign-image`);
     const { signature, timestamp } = await resSign.json();
 
     const uploadData = new FormData();
@@ -102,7 +104,7 @@ const handleSubmit = async (e)=>{
   e.preventDefault();
   try {
     setUploading(true)
-    const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
+    const res = await fetch(`${apiUrl}/api/post/updatepost/${postId}/${currentUser._id}`, {
       method: 'PUT',
       credentials: 'include',
       headers: {

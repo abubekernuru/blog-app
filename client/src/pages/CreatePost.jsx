@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { HiCheckCircle, HiCloudUpload } from 'react-icons/hi';
 
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function CreatePost() {
 
 const [imageFile, setImageFile] = useState(null);
@@ -34,7 +36,7 @@ const handleUploadImage = async () => {
   try {
     setImageUploading(true);
     setImageUploaded(false);
-    const resSign = await fetch('/api/user/sign-image');
+    const resSign = await fetch(`${apiUrl}/api/user/sign-image`);
     const { signature, timestamp } = await resSign.json();
 
     const uploadData = new FormData();
@@ -82,7 +84,7 @@ const handleSubmit = async (e)=>{
   e.preventDefault();
   try {
     setUploading(true)
-    const res = await fetch('/api/post/createpost', {
+    const res = await fetch(`${apiUrl}/api/post/createpost`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

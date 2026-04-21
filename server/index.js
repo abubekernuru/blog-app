@@ -6,9 +6,20 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://blog-app-drab-two.vercel.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
+    origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+    } else {
+        callback(new Error('Not allowed by CORS'));
+    }
+    },
+    credentials: true
 }));
 app.use(express.json())
 
@@ -24,12 +35,13 @@ app.use('/api/auth', authRoute);
 app.use('/api/post', postRoute);
 app.use('/api/comment', commentRoute);
 
+const PORT = process.env.PORT || 3002;
 mongoose.connect(process.env.MONGO_URI)
     .then(()=>{
         console.log("Succefully conected to db")
-        app.listen(3002, ()=>{
-            console.log("app is listening on port 3002")
-        })
+        app.listen(PORT, () => {
+        console.log(`app is listening on port ${PORT}`);
+        });
     })
 
 

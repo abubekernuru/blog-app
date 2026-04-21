@@ -14,6 +14,7 @@ import UpdatePost from './pages/UpdatePost.jsx';
 import Post from './pages/Post.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 import Search from './pages/Search.jsx';
+import Projects from './pages/Projects.jsx';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
         <Route path='/search' element={<Search />} />
+        <Route path='/projects' element={<Projects />} />
         <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>

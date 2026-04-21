@@ -3,12 +3,14 @@ import CallToAction from '../components/CallToAction';
 import { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export default function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch(`/api/post/getPosts`);
+      const res = await fetch(`${apiUrl}/api/post/getPosts`);
       const data = await res.json();
       setPosts(data.posts);
     };

@@ -4,6 +4,8 @@ import {HiArrowNarrowUp, HiOutlineAnnotation, HiOutlineDocumentText, HiOutlineUs
 import {Button, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from 'flowbite-react'
 import {Link} from 'react-router-dom'
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function DashboardComp() {
   const [users, setUsers] = useState([])
   const [posts, setPosts] = useState([])
@@ -19,7 +21,7 @@ function DashboardComp() {
   useEffect(() =>{
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`/api/user/getusers?limit=5`)
+        const res = await fetch(`${apiUrl}/api/user/getusers?limit=5`)
         const data = await res.json()
         setUsers(data.users)
         setTotalUsers(data.totalUsers)

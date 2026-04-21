@@ -12,11 +12,14 @@ function DashUsers() {
     const [loadingComments, setLoadingComments] = useState(false);
     const {currentUser} = useSelector((state) => state.user);
   // console.log(comments)
+
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
     const fetchComments = async () => {
         setLoadingComments(true);
     try {
-        const res = await fetch(`/api/comment/getComments`,{
+        const res = await fetch(`${apiUrl}/api/comment/getComments`,{
             credentials: 'include'
         });
         const data = await res.json();
@@ -41,7 +44,7 @@ function DashUsers() {
 const handleShowMore = async () => {
     const startIndex = comments.length;
     try {
-        const res = await fetch(`/api/comment/getcomments?startIndex=${startIndex}`,{
+        const res = await fetch(`${apiUrl}/api/comment/getcomments?startIndex=${startIndex}`,{
             credentials: 'include'
         });
         const data = await res.json();
@@ -59,7 +62,7 @@ const handleShowMore = async () => {
 const handleDeleteComment = async ()=>{
     setShowModal(false)
     try {
-        const res = await fetch(`/api/comment/deletecomment/${commentsIdToDelete}`, {
+        const res = await fetch(`${apiUrl}/api/comment/deletecomment/${commentsIdToDelete}`, {
             method: 'DELETE',
             credentials: 'include'
         })

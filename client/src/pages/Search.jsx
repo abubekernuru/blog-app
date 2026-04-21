@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function Search() {
     const [searchData, setSearchData] = useState({
         searchTerm: "",
@@ -34,7 +36,7 @@ function Search() {
                 setLoading(true);
                 setShowMore(false);
                 const searchQuery = searchParams.toString()
-                const res = await fetch(`/api/post/getposts?${searchQuery}`);
+                const res = await fetch(`${apiUrl}/api/post/getposts?${searchQuery}`);
                 const data = await res.json();
                 if(res.ok){
                     setPosts(data.posts);
@@ -87,7 +89,7 @@ function Search() {
             const urlParams = new URLSearchParams(location.search);
             urlParams.set('startIndex', startIndex);
             const searchQuery = urlParams.toString();
-            const res = await fetch(`/api/post/getposts?${searchQuery}`)
+            const res = await fetch(`${apiUrl}/api/post/getposts?${searchQuery}`)
             if(!res.ok){
                 return;
             }

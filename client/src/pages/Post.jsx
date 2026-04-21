@@ -6,6 +6,8 @@ import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection.jsx';
 import PostCard from '../components/PostCard.jsx';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function Post() {
     const [loading, setLoading] = useState(true);
     const [post, setPost] = useState();
@@ -17,7 +19,7 @@ function Post() {
     const fetchPosts = async () => {
         setLoading(true);
     try {
-        const res = await fetch(`/api/post/getposts?slug=${postSlug}`,{
+        const res = await fetch(`${apiUrl}/api/post/getposts?slug=${postSlug}`,{
             credentials: 'include'
         });
         const data = await res.json();
@@ -41,7 +43,7 @@ function Post() {
     useEffect(()=>{
         const fetchPosts = async()=> {
             try {
-                const res = await fetch(`/api/post/getposts?limit=3`,{
+                const res = await fetch(`${apiUrl}/api/post/getposts?limit=3`,{
                     creadentials: 'include'
                 })
                 const data = await res.json();

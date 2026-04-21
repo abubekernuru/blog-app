@@ -5,6 +5,8 @@ import { Button, Modal, ModalBody, ModalHeader, Textarea } from 'flowbite-react'
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
     const [user, setUser] = useState({})
     const [isEditing, setIsEditing] = useState(false);
@@ -15,7 +17,7 @@ function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
     useEffect(()=>{
         const getUser = async ()=>{
             try {
-                const res = await fetch(`/api/user/getuser/${comment.userId}`);
+                const res = await fetch(`${apiUrl}/api/user/getuser/${comment.userId}`);
                 const data = await res.json();
                 if(res.ok){
                     setUser(data)
@@ -34,7 +36,7 @@ function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
     }
     const handleSave = async ()=>{
         try {
-            const res = await fetch(`/api/comment/editcomment/${comment._id}`,{
+            const res = await fetch(`${apiUrl}/api/comment/editcomment/${comment._id}`,{
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json"
@@ -60,7 +62,7 @@ function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
                 return;
             }
             setShowModal(false);
-            const res = await fetch(`/api/comment/deletecomment/${comment._id}`,{
+            const res = await fetch(`${apiUrl}/api/comment/deletecomment/${comment._id}`,{
                 method: 'DELETE',
                 credentials: 'include',
             })

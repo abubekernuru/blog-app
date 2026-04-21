@@ -12,11 +12,13 @@ function DashUsers() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const {currentUser} = useSelector((state) => state.user);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchPosts = async () => {
       setLoadingUsers(true);
     try {
-        const res = await fetch(`/api/user/getusers`,{
+        const res = await fetch(`${apiUrl}/api/user/getusers`,{
           credentials: 'include'
         });
         const data = await res.json();
@@ -41,7 +43,7 @@ function DashUsers() {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`,{
+      const res = await fetch(`${apiUrl}/api/user/getusers?startIndex=${startIndex}`,{
           credentials: 'include'
         });
       const data = await res.json();
@@ -59,7 +61,7 @@ function DashUsers() {
   const handleDeleteUser = async ()=>{
     setShowModal(false)
     try {
-      const res = await fetch(`/api/user/deleteuser/${usersIdToDelete}`, {
+      const res = await fetch(`${apiUrl}/api/user/deleteuser/${usersIdToDelete}`, {
         method: 'DELETE',
         credentials: 'include'
       })
