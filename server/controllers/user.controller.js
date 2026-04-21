@@ -86,109 +86,69 @@ const signoutUser = async (req, res, next) => {
 }
 
 const getUsers = async (req, res, next) => {
-//     if(!req.user.isAdmin){
-//         return next(errorHandler(403, "You are not allowed to see users!"))
-//     }
-//     try {
-//         const startIndex = parseInt(req.query.startIndex) || 0;
-//         const limit = parseInt(req.query.limit) || 9;
-//         const sortDirection = req.query.order === 'asc' ? 1 : -1;
-//         //get users
-//         const users = await User.find()
-//             .sort({ updatedAt: sortDirection })
-//             .skip(startIndex)
-//             .limit(limit);
-//         // get total users count
-//         const totalUsers = await User.countDocuments();
-//         // get users count created in the last month
-//         const now = new Date();
-//         const oneMonthAgo = new Date(
-//             now.getFullYear(),
-//             now.getMonth() - 1,
-//             now.getDate()
-//         );
-//         const lastMonthUsers = await User.countDocuments({
-//             createdAt: { $gte: oneMonthAgo },
-//         });
-//         //separate the password from the rest of the user data
-//         const usersWithoutPw = users.map((user) => {
-//             const { password, ...rest } = user._doc;
-//             return rest;
-//         });
-//         res.status(200).json({
-//             users: usersWithoutPw,
-//             totalUsers,
-//             lastMonthUsers
-//         });
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+    if(!req.user.isAdmin){
+        return next(errorHandler(403, "You are not allowed to see users!"))
+    }
+    try {
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === 'asc' ? 1 : -1;
+        //get users
+        const users = await User.find()
+            .sort({ updatedAt: sortDirection })
+            .skip(startIndex)
+            .limit(limit);
+        // get total users count
+        const totalUsers = await User.countDocuments();
+        // get users count created in the last month
+        const now = new Date();
+        const oneMonthAgo = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            now.getDate()
+        );
+        const lastMonthUsers = await User.countDocuments({
+            createdAt: { $gte: oneMonthAgo },
+        });
+        //separate the password from the rest of the user data
+        const usersWithoutPw = users.map((user) => {
+            const { password, ...rest } = user._doc;
+            return rest;
+        });
+        res.status(200).json({
+            users: usersWithoutPw,
+            totalUsers,
+            lastMonthUsers
+        });
+    } catch (error) {
+        next(error)
+    }
+}
 
-// const deleteUsers = async (req, res, next)=>{
-//     if(!req.user.isAdmin){
-//         return next(errorHandler(403, "You are not allowed to delete users!"))
-//     }
-//     try {
-//         const {userId} = req.params;
-//         await User.findByIdAndDelete(userId);
-//         res.status(200).json('User has been deleted successfully');
-//     } catch (error) {
-//         next(error)
-//     }
+const deleteUsers = async (req, res, next)=>{
+    if(!req.user.isAdmin){
+        return next(errorHandler(403, "You are not allowed to delete users!"))
+    }
+    try {
+        const {userId} = req.params;
+        await User.findByIdAndDelete(userId);
+        res.status(200).json('User has been deleted successfully');
+    } catch (error) {
+        next(error)
+    }
 
-// }
+}
 
-// const getUser = async (req, res, next)=> {
-//     const {userId} = req.params;
-//     try {
-//         const gotUser = await User.findById(userId);
-//         if (!gotUser) return next(errorHandler(404, 'User not found'));
-//         const {password, ...rest} = gotUser._doc;
-//         res.status(200).json(rest)
-//     } catch (error) {
-//         next(error)
-//     }
-
-if (!req.user.isAdmin) {
-    return next(errorHandler(403, 'You are not allowed to see all users'));
-  }
-  try {
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
-    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
-
-    const users = await User.find()
-      .sort({ createdAt: sortDirection })
-      .skip(startIndex)
-      .limit(limit);
-
-    const usersWithoutPassword = users.map((user) => {
-      const { password, ...rest } = user._doc;
-      return rest;
-    });
-
-    const totalUsers = await User.countDocuments();
-
-    const now = new Date();
-
-    const oneMonthAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - 1,
-      now.getDate()
-    );
-    const lastMonthUsers = await User.countDocuments({
-      createdAt: { $gte: oneMonthAgo },
-    });
-
-    res.status(200).json({
-      users: usersWithoutPassword,
-      totalUsers,
-      lastMonthUsers,
-    });
-  } catch (error) {
-    next(error);
-  }
+const getUser = async (req, res, next)=> {
+    const {userId} = req.params;
+    try {
+        const gotUser = await User.findById(userId);
+        if (!gotUser) return next(errorHandler(404, 'User not found'));
+        const {password, ...rest} = gotUser._doc;
+        res.status(200).json(rest)
+    } catch (error) {
+        next(error)
+    }
 }
 
 module.exports = { test, generateSignature, updateUser, deleteUser, signoutUser, getUsers, deleteUsers, getUser };
