@@ -5,6 +5,8 @@ import { useRef, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom'
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function DashProfile() {
   const { currentUser, loading, error} = useSelector((state)=> state.user);
   const dispatch = useDispatch();
@@ -53,7 +55,7 @@ function DashProfile() {
       try {
         setSuccess(null);
         dispatch(updateUserStart());
-        const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        const res = await fetch(`${apiUrl}/api/user/update/${currentUser._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -81,7 +83,7 @@ function DashProfile() {
       dispatch(deleteUserStart());
       if(window.confirm('Are you sure you want to delete your account? This action cannot be undone.')){
         try {
-          const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+          const res = await fetch(`${apiUrl}/api/user/delete/${currentUser._id}`, {
             method: 'DELETE',
           })
           const data = await res.json();
@@ -95,7 +97,7 @@ function DashProfile() {
     };
     const handleSignout = async ()=>{
       try {
-        const res = await fetch('/api/user/signout', {
+        const res = await fetch(`${apiUrl}/api/user/signout`, {
           method: 'POST',
         })
         const data = await res.json();

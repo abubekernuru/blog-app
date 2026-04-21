@@ -4,6 +4,7 @@ import { Textarea, Button, Alert } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import Comment from './Comment.jsx';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function CommentSection({postId}) {
     const { currentUser } = useSelector((state)=>state.user);
@@ -19,7 +20,7 @@ function CommentSection({postId}) {
             return;
         }
         try {
-            const res = await fetch(`/api/comment/createcomment`,{
+            const res = await fetch(`${apiUrl}/api/comment/createcomment`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -54,7 +55,7 @@ useEffect(()=>{
     const getComments = async ()=>{
         try {
             setCommentError(null)
-            const res = await fetch(`/api/comment/getcomment/${postId}`);
+            const res = await fetch(`${apiUrl}/api/comment/getcomment/${postId}`);
             const data = await res.json();
             if(res.ok){
                 setComments(data);
@@ -75,7 +76,7 @@ const handleLike = async (commentId) => {
             navigate('/signin');
             return;
         }
-        const res = await fetch(`/api/comment/likecomment/${commentId}`,{
+        const res = await fetch(`${apiUrl}/api/comment/likecomment/${commentId}`,{
             method: 'PUT',
             credentials: 'include'
         });

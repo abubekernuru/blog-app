@@ -21,6 +21,7 @@ import { toggleTheme } from '../redux/themeSlice'
 import { useEffect } from 'react'
 import { signoutSuccess } from '../redux/userSlice'
 
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function Header() {
   const location = useLocation()
@@ -41,7 +42,7 @@ useEffect(() => {
 
 const handleSignout = async ()=>{
   try {
-    const res = await fetch('/api/user/signout', {
+    const res = await fetch(`${apiUrl}/api/user/signout`, {
       method: 'POST',
     })
     const data = await res.json();

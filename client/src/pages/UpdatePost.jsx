@@ -22,6 +22,7 @@ const { currentUser } = useSelector((state) => state.user);
 const navigate = useNavigate();
 const { postId } = useParams();
 
+
 useEffect(()=>{
   const fetchPost = async()=>{
     try {

@@ -7,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import { signoutSuccess } from '../redux/userSlice.js';
 import { useSelector } from 'react-redux'
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function DashSidebar() {
     const location = useLocation()
     const dispatch = useDispatch();
@@ -23,7 +25,7 @@ function DashSidebar() {
 
     const handleSignout = async ()=>{
       try {
-        const res = await fetch('/api/user/signout', {
+        const res = await fetch(`${apiUrl}/api/user/signout`, {
           method: 'POST',
         })
         const data = await res.json();

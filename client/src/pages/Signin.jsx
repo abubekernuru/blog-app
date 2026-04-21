@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signinFailure, signinStart, signinSuccess } from '../redux/userSlice';
 import OAuth from '../components/OAuth';
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 function Signin() {
   const dispatch = useDispatch();
@@ -22,7 +24,7 @@ function Signin() {
     }
     try {
       dispatch(signinStart());
-      const res = await fetch('/api/auth/signin', {
+      const res = await fetch(`${apiUrl}/api/auth/signin`, {
         method: "POST",
         headers:{
           'Content-Type': 'application/json'
