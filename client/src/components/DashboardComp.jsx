@@ -24,6 +24,13 @@ function DashboardComp() {
         const res = await fetch(`${apiUrl}/api/user/getusers?limit=5`, {
           credentials: 'include'
         });
+        if (!res.ok) {
+          console.error('Failed to fetch users:', res.status);
+          setUsers([]);
+          setTotalUsers(0);
+          setLastMonthUsers(0);
+          return;
+        }
         const data = await res.json()
         setUsers(data.users)
         setTotalUsers(data.totalUsers)

@@ -142,3 +142,5 @@ const googleAuth = async (req, res, next) => {
 };
 
 module.exports = { signup, signin, googleAuth };
+
+
