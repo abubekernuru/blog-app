@@ -3,13 +3,14 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
-app.use(cookieParser());
 const cors = require('cors')
 
 app.use(cors({
     origin: 'https://blog-app-drab-two.vercel.app',
     credentials: true
 }));
+
+app.use(cookieParser());
 app.use(express.json())
 
 dotenv.config();
