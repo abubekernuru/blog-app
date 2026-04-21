@@ -43,16 +43,11 @@ const signin = async (req, res, next)=>{
     try {
         const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
         const {password: pass, ...rest} = user._doc;
-      // Cookie options for cross-site requests
-        const cookieOptions = {
-        httpOnly: true,
-        };
-        // In production, set sameSite and secure for cross-site cookies
-        if (process.env.NODE_ENV === 'production') {
-        cookieOptions.sameSite = 'none';
-        cookieOptions.secure = true;
-        }
-        res.status(200).cookie('access_token', token, cookieOptions).json(rest);
+        res.status(200).cookie('access_token', token, {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        }).json(rest);
     } catch (error) {
         next(error)
     }
@@ -66,17 +61,11 @@ const googleAuth = async (req, res, next)=>{
         if(user){
             const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
             const {password: pass, ...rest} = user._doc;
-            
-            // Cookie options for cross-site requests
-            const cookieOptions = {
-                httpOnly: true,
-            };
-            // In production, set sameSite and secure for cross-site cookies
-            if (process.env.NODE_ENV === 'production') {
-                cookieOptions.sameSite = 'none';
-                cookieOptions.secure = true;
-            }
-            res.status(200).cookie('access_token', token, cookieOptions).json(rest);
+            res.status(200).cookie('access_token', token, {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        }).json(rest);
             
         } else{
             const newUsername = name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4);
@@ -91,16 +80,11 @@ const googleAuth = async (req, res, next)=>{
             await newUser.save();
             const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET);
             const {password: pass, ...rest} = newUser._doc;
-            // Cookie options for cross-site requests
-            const cookieOptions = {
-                httpOnly: true,
-            };
-            // In production, set sameSite and secure for cross-site cookies
-            if (process.env.NODE_ENV === 'production') {
-                cookieOptions.sameSite = 'none';
-                cookieOptions.secure = true;
-            }
-            res.status(200).cookie('access_token', token, cookieOptions).json(rest);
+            res.status(200).cookie('access_token', token, {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        }).json(rest);
         }
         
     } catch (error) {
