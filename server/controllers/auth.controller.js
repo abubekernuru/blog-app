@@ -1,208 +1,140 @@
-// const User = require('../model/user.model.js');
-// const bcryptjs = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
-// const errorHandler = require('../utils/error.js');
-
-
-// const signup = async (req, res, next)=>{
-//     const {username, email, password} = req.body;
-//     if(!username || !email || !password || username===""|| email===""|| password===""){
-//         return res.status(400).json({message: "All fields are required"})
-//     }
-//     const hashedPassword = bcryptjs.hashSync(password, 10);
-//     const newUser = new User({
-//         username,
-//         email,
-//         password: hashedPassword
-//     })
-//     try {
-//         await newUser.save()
-//         res.status(200).json(newUser);
-//     } catch (error) {
-//         next(error)
-//     }
-// }
-
-// const signin = async (req, res, next)=>{
-
-//     const {email, password} = req.body;
-
-//     if(!email || !password || email==="" || password===""){
-//         return res.status(400).json({message: "All fields are required!"})
-//     }
-
-//     const user = await User.findOne({email});
-
-//     if(!user){
-//         return next(errorHandler(400, "User not found!"))
-//     }
-//     const isValid = bcryptjs.compareSync(password, user.password)
-//     if(!isValid){
-//         return next(errorHandler(400, "Invalid Credentials"))
-//     }
-//     try {
-//         const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
-//         const {password: pass, ...rest} = user._doc;
-//         res.cookie('access_token', token, {
-//             httpOnly: true,
-//             secure: true,
-//             sameSite: 'None'
-//             })
-//         .status(200).json(rest)
-//     } catch (error) {
-//         next(error)
-//     }
-
-// }
-
-// const googleAuth = async (req, res, next)=>{
-//     const {name, email, avatar} = req.body;
-//     try {
-//         const user = await User.findOne({email});
-//         if(user){
-//             const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
-//             const {password: pass, ...rest} = user._doc;
-//             res.cookie('access_token', token, {
-//                 httpOnly: true,
-//                 secure: true,
-//                 sameSite: 'None'
-//                 })
-//             .status(200).json(rest)
-            
-//         } else{
-//             const newUsername = name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4);
-//             const generatedPw = Math.random().toString(36).slice(-8);
-//             const hashedPassword = bcryptjs.hashSync(generatedPw, 10);
-//             const newUser = new User({
-//                 username: newUsername,
-//                 email: email,
-//                 password: hashedPassword,
-//                 avatar: avatar
-//             })
-//             await newUser.save();
-//             const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET);
-//             const {password: pass, ...rest} = newUser._doc;
-//             res.cookie('access_token', token, {
-//                 httpOnly: true,
-//                 secure: true,
-//                 sameSite: 'None'
-//                 })
-//             .status(200).json(rest);
-//         }
-        
-//     } catch (error) {
-//         next(error)
-//     }
-// }
-
-
-// module.exports = {signup, signin, googleAuth}
-
+// Importing User model for database operations
 const User = require('../model/user.model.js');
+// Importing bcryptjs for password hashing
 const bcryptjs = require('bcryptjs');
+// Importing errorHandler utility for handling errors
+const { errorHandler } = require('../utils/error.js');
+// Importing jsonwebtoken for creating JWT tokens
 const jwt = require('jsonwebtoken');
-const errorHandler = require('../utils/error.js');
 
-// Helper for cookie configuration to keep code DRY
-const setAuthCookie = (res, token) => {
-  return res.cookie('access_token', token, {
-    httpOnly: true,
-    // Only use secure/sameSite: none in production for cross-site compatibility
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-  });
-};
-
+// Signup function to create a new user
 const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  // Validation: Check for existence and empty strings
-  if (!username || !email || !password || username.trim() === '' || email.trim() === '' || password.trim() === '') {
-    return next(errorHandler(400, "All fields are required"));
+  if (
+    !username ||
+    !email ||
+    !password ||
+    username === '' ||
+    email === '' ||
+    password === ''
+  ) {
+    next(errorHandler(400, 'All fields are required'));
   }
 
-  try {
-    const hashedPassword = bcryptjs.hashSync(password, 10);
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword
-    });
+  const hashedPassword = bcryptjs.hashSync(password, 10);
 
+  const newUser = new User({
+    username,
+    email,
+    password: hashedPassword,
+  });
+
+  try {
     await newUser.save();
-    res.status(201).json({ message: "Signup successful" });
+    res.json('Signup successful');
   } catch (error) {
     next(error);
   }
 };
 
+// Signin function to authenticate a user
 const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password || email.trim() === '' || password.trim() === '') {
-    return next(errorHandler(400, "All fields are required!"));
+  if (!email || !password || email === '' || password === '') {
+    next(errorHandler(400, 'All fields are required'));
   }
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return next(errorHandler(404, "User not found!"));
+    const validUser = await User.findOne({ email });
+    if (!validUser) {
+      return next(errorHandler(404, 'User not found'));
     }
-
-    const isValid = bcryptjs.compareSync(password, user.password);
-    if (!isValid) {
-      return next(errorHandler(400, "Invalid Credentials"));
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    if (!validPassword) {
+      return next(errorHandler(400, 'Invalid password'));
     }
-
     const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin }, 
+      { id: validUser._id, isAdmin: validUser.isAdmin },
       process.env.JWT_SECRET
     );
 
-    // Remove password from response
-    const { password: pass, ...rest } = user._doc;
+    const { password: pass, ...rest } = validUser._doc;
 
-    setAuthCookie(res, token).status(200).json(rest);
+    // Cookie options for cross-site requests
+    const cookieOptions = {
+      httpOnly: true,
+    };
+
+    // In production, set sameSite and secure for cross-site cookies
+    if (process.env.NODE_ENV === 'production') {
+      cookieOptions.sameSite = 'none';
+      cookieOptions.secure = true;
+    }
+
+    res.status(200).cookie('access_token', token, cookieOptions).json(rest);
   } catch (error) {
     next(error);
   }
 };
 
+// Google authentication function
 const googleAuth = async (req, res, next) => {
-  const { name, email, avatar } = req.body;
+  const { email, name, googlePhotoUrl } = req.body;
   try {
     const user = await User.findOne({ email });
-
     if (user) {
       const token = jwt.sign(
-        { id: user._id, isAdmin: user.isAdmin }, 
+        { id: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET
       );
-      const { password: pass, ...rest } = user._doc;
-      setAuthCookie(res, token).status(200).json(rest);
+      const { password, ...rest } = user._doc;
+
+      // Cookie options for cross-site requests
+      const cookieOptions = {
+        httpOnly: true,
+      };
+
+      // In production, set sameSite and secure for cross-site cookies
+      if (process.env.NODE_ENV === 'production') {
+        cookieOptions.sameSite = 'none';
+        cookieOptions.secure = true;
+      }
+
+      res.status(200).cookie('access_token', token, cookieOptions).json(rest);
     } else {
-      // Generate a complex random password for new Google users
-      const generatedPw = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-      const hashedPassword = bcryptjs.hashSync(generatedPw, 10);
-
-      const newUsername = name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4);
-      
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
       const newUser = new User({
-        username: newUsername,
-        email: email,
+        username:
+          name.toLowerCase().split(' ').join('') +
+          Math.random().toString(9).slice(-4),
+        email,
         password: hashedPassword,
-        avatar: avatar // or profilePicture: avatar, depending on your Schema
+        profilePicture: googlePhotoUrl,
       });
-
       await newUser.save();
-
       const token = jwt.sign(
-        { id: newUser._id, isAdmin: newUser.isAdmin }, 
+        { id: newUser._id, isAdmin: newUser.isAdmin },
         process.env.JWT_SECRET
       );
-      const { password: pass, ...rest } = newUser._doc;
+      const { password, ...rest } = newUser._doc;
 
-      setAuthCookie(res, token).status(200).json(rest);
+      // Cookie options for cross-site requests
+      const cookieOptions = {
+        httpOnly: true,
+      };
+
+      // In production, set sameSite and secure for cross-site cookies
+      if (process.env.NODE_ENV === 'production') {
+        cookieOptions.sameSite = 'none';
+        cookieOptions.secure = true;
+      }
+
+      res.status(200).cookie('access_token', token, cookieOptions).json(rest);
     }
   } catch (error) {
     next(error);
