@@ -2,6 +2,7 @@ import { Button, Dropdown, DropdownItem, Select, TextInput } from 'flowbite-reac
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import PostCard from '../components/PostCard';
 
 function Search() {
     const [searchData, setSearchData] = useState({
@@ -10,6 +11,9 @@ function Search() {
         order: "desc"
     });
     const [posts, setPosts] = useState([])
+    const [loading, setLoading] = useState(false);
+    const [showMore, setShowMore] = useState(false);
+    const [showMoreLoading, setShowMoreLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     useEffect(() => {
@@ -27,13 +31,23 @@ function Search() {
         }
         const fetchPosts = async ()=> {
             try {
+                setLoading(true);
+                setShowMore(false);
                 const searchQuery = searchParams.toString()
                 const res = await fetch(`/api/post/getposts?${searchQuery}`);
                 const data = await res.json();
-                setPosts(data.posts);
-                console.log(data.posts)
+                if(res.ok){
+                    setPosts(data.posts);
+                    if (data.posts.length === 9) {
+                        setShowMore(true);
+                    } else {
+                        setShowMore(false);
+                    }
+                }
             } catch (error) {
                 console.log(error.message)
+            } finally {
+                setLoading(false);
             }
         }
         fetchPosts();
@@ -65,7 +79,32 @@ function Search() {
         const searchQuery = searchParams.toString();
         navigate(`/search?${searchQuery}`)
     }
-    // console.log(searchData)
+
+    const handleShowMore = async ()=>{
+        try {
+            setShowMoreLoading(true);
+            const startIndex = posts.length;
+            const urlParams = new URLSearchParams(location.search);
+            urlParams.set('startIndex', startIndex);
+            const searchQuery = urlParams.toString();
+            const res = await fetch(`/api/post/getposts?${searchQuery}`)
+            if(!res.ok){
+                return;
+            }
+            if(res.ok){
+                setShowMoreLoading(false);
+                const data = await res.json();
+                setPosts((prev) => [...prev, ...data.posts]);
+                if (data.posts.length === 9) {
+                    setShowMore(true);
+                } else {
+                    setShowMore(false);
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return (
         <div className='flex flex-col md:flex-row'>
             <div className='p-7 border-b md:border-r md:min-h-screen border-gray-500'>
@@ -103,7 +142,28 @@ function Search() {
                     <Button type='submit' className='bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white border-0 shadow-md transition-all duration-200 cursor-pointer'>Apply Filters</Button>
                 </form>
             </div>
-            
+            <div className='w-full'>
+                <h1 className='text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5 '>
+                    Posts results:
+                </h1>
+                <div className='p-7 flex flex-wrap gap-4'>
+                    {!loading && posts.length === 0 && (
+                        <p className='text-xl text-gray-500'>No posts found.</p>
+                    )}
+                    {loading && <p className='text-xl text-gray-500'>Loading...</p>}
+                    {!loading &&
+                        posts &&
+                        posts.map((post) => <PostCard key={post._id} post={post} />)}
+                    {showMore && (
+                        <button
+                        onClick={handleShowMore}
+                        className='text-teal-500 text-lg hover:underline p-7 w-full cursor-pointer'
+                        >
+                            {showMoreLoading ? 'Loading...' : 'Show More'}
+                        </button>
+                    )}
+                </div>
+                </div>
         </div>
     )
 }
