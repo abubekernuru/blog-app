@@ -25,6 +25,7 @@ function CommentSection({postId}) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     comment,
                     userId: currentUser._id,
@@ -55,7 +56,7 @@ useEffect(()=>{
     const getComments = async ()=>{
         try {
             setCommentError(null)
-            const res = await fetch(`${apiUrl}/api/comment/getcomment/${postId}`);
+            const res = await fetch(`${apiUrl}/api/comment/getcomment/${postId}`, { credentials: 'include' });
             const data = await res.json();
             if(res.ok){
                 setComments(data);

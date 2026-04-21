@@ -36,7 +36,7 @@ const handleUploadImage = async () => {
   try {
     setImageUploading(true);
     setImageUploaded(false);
-    const resSign = await fetch(`${apiUrl}/api/user/sign-image`);
+    const resSign = await fetch(`${apiUrl}/api/user/sign-image`, { credentials: 'include' });
     const { signature, timestamp } = await resSign.json();
 
     const uploadData = new FormData();
@@ -89,6 +89,7 @@ const handleSubmit = async (e)=>{
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(formData),
     });
     const data = await res.json();

@@ -44,7 +44,7 @@ function Post() {
         const fetchPosts = async()=> {
             try {
                 const res = await fetch(`${apiUrl}/api/post/getposts?limit=3`,{
-                    creadentials: 'include'
+                    credentials: 'include'
                 })
                 const data = await res.json();
                 if(res.ok){

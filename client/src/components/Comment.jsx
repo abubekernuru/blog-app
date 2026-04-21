@@ -17,7 +17,7 @@ function Comment({comment, onLike, currentUser, onEdit, onDelete}) {
     useEffect(()=>{
         const getUser = async ()=>{
             try {
-                const res = await fetch(`${apiUrl}/api/user/getuser/${comment.userId}`);
+                const res = await fetch(`${apiUrl}/api/user/getuser/${comment.userId}`, { credentials: 'include' });
                 const data = await res.json();
                 if(res.ok){
                     setUser(data)

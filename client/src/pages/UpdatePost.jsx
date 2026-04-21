@@ -26,7 +26,7 @@ const { postId } = useParams();
 useEffect(()=>{
   const fetchPost = async()=>{
     try {
-      const res = await fetch(`${apiUrl}/api/post/getposts?postId=${postId}`);
+      const res = await fetch(`${apiUrl}/api/post/getposts?postId=${postId}`, { credentials: 'include' });
       const data = await res.json();
       // console.log(data.posts[0])
       if(res.ok){
