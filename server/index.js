@@ -6,19 +6,8 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'https://blog-app-drab-two.vercel.app'
-];
-
 app.use(cors({
-    origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-    } else {
-        callback(new Error('Not allowed by CORS'));
-    }
-    },
+    origin: 'https://blog-app-drab-two.vercel.app',
     credentials: true
 }));
 app.use(express.json())
