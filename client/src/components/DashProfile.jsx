@@ -22,7 +22,7 @@ function DashProfile() {
     if (file) {
       try {
         setImageFileUrl(URL.createObjectURL(file));
-        const resSign = await fetch('/api/user/sign-image');
+        const resSign = await fetch(`${apiUrl}/api/user/sign-image`, { credentials: 'include' });
         const { signature, timestamp } = await resSign.json();
         const uploadData = new FormData();
         uploadData.append('file', file);
@@ -60,6 +60,7 @@ function DashProfile() {
           headers: {
             'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify(formData)
         })
         const data = await res.json();
@@ -85,6 +86,7 @@ function DashProfile() {
         try {
           const res = await fetch(`${apiUrl}/api/user/delete/${currentUser._id}`, {
             method: 'DELETE',
+            credentials: 'include'
           })
           const data = await res.json();
           dispatch(deleteUserSuccess(data));
@@ -99,6 +101,7 @@ function DashProfile() {
       try {
         const res = await fetch(`${apiUrl}/api/user/signout`, {
           method: 'POST',
+          credentials: 'include'
         })
         const data = await res.json();
         dispatch(signoutSuccess());

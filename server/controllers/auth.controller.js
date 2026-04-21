@@ -43,11 +43,14 @@ const signin = async (req, res, next)=>{
     try {
         const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
         const {password: pass, ...rest} = user._doc;
-        res.status(200).cookie('access_token', token, {
+        const cookieOptions = {
             httpOnly: true,
+            // when deployed to production (cross-site), ensure cookie is sent
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        }).json(rest);
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+            // consider setting a sensible maxAge (ms) if desired
+        };
+        res.status(200).cookie('access_token', token, cookieOptions).json(rest);
     } catch (error) {
         next(error)
     }
@@ -61,11 +64,12 @@ const googleAuth = async (req, res, next)=>{
         if(user){
             const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
             const {password: pass, ...rest} = user._doc;
-            res.status(200).cookie('access_token', token, {
-            httpOnly: true,
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        }).json(rest);
+            const cookieOptions = {
+                httpOnly: true,
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+            };
+            res.status(200).cookie('access_token', token, cookieOptions).json(rest);
             
         } else{
             const newUsername = name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4);
@@ -80,11 +84,12 @@ const googleAuth = async (req, res, next)=>{
             await newUser.save();
             const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET);
             const {password: pass, ...rest} = newUser._doc;
-            res.status(200).cookie('access_token', token, {
-            httpOnly: true,
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        }).json(rest);
+            const cookieOptions = {
+                httpOnly: true,
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                secure: process.env.NODE_ENV === 'production' ? true : false,
+            };
+            res.status(200).cookie('access_token', token, cookieOptions).json(rest);
         }
         
     } catch (error) {
