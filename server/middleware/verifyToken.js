@@ -3,7 +3,16 @@ const errorHandler = require('../utils/error.js');
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies.access_token;
-    // console.log('verifyToken cookies:', req.cookies);
+    // Temporary debug logs to help investigate missing cookie in production
+    console.log('[verifyToken] incoming request:', {
+        path: req.originalUrl,
+        origin: req.headers.origin,
+        cookies: req.cookies,
+        headers: {
+            cookie: req.headers.cookie,
+            referer: req.headers.referer
+        }
+    });
 
     if (!token) {
         return next(errorHandler(401, 'You are not authenticated!'));
