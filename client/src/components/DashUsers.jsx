@@ -15,7 +15,7 @@ function DashUsers() {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUsers = async () => {
       setLoadingUsers(true);
     try {
         const res = await fetch(`${apiUrl}/api/user/getusers`,{
@@ -36,7 +36,7 @@ function DashUsers() {
     }
   }
   if(currentUser?.isAdmin){
-          fetchPosts();
+          fetchUsers();
     }
   }, [currentUser?._id])
 
