@@ -13,9 +13,9 @@ let persistor = persistStore(store);
 createRoot(document.getElementById('root')).render(
   <PersistGate loading={null} persistor={persistor}>
   <Provider store={store}>
-    <ThemeProvider
-    <App />
-    <ThemeProvider
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </Provider>
   </PersistGate>
 )
