@@ -41,9 +41,10 @@ const signin = async (req, res, next)=>{
         return next(errorHandler(400, "Invalid Credentials"))
     }
     try {
-        const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
+        const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET, {expiresIn: "7d"});
         const {password: pass, ...rest} = user._doc;
         const cookieOptions = {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             // when deployed to production (cross-site), ensure cookie is sent
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -62,9 +63,10 @@ const googleAuth = async (req, res, next)=>{
     try {
         const user = await User.findOne({email});
         if(user){
-            const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
+            const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET, {expiresIn: "7d"});
             const {password: pass, ...rest} = user._doc;
             const cookieOptions = {
+                maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
                 secure: process.env.NODE_ENV === 'production'
@@ -82,9 +84,10 @@ const googleAuth = async (req, res, next)=>{
                 avatar: avatar
             })
             await newUser.save();
-            const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET);
+            const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET, {expiresIn: "7d"});
             const {password: pass, ...rest} = newUser._doc;
             const cookieOptions = {
+                maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
                 secure: process.env.NODE_ENV === 'production'
