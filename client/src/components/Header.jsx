@@ -133,7 +133,7 @@ const handleSignout = async ()=>{
       </Dropdown>
     ) : (
       <Link to={'/signin'}>
-        <Button color="pink" outline>
+        <Button color="pink" outline className='cursor-pointer'>
           Sign In
         </Button>
       </Link>
