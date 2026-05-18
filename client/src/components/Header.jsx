@@ -47,7 +47,6 @@ const handleSignout = async ()=>{
     })
     const data = await res.json();
     dispatch(signoutSuccess());
-    alert(data);
   } catch (error) {
     console.log('Error signing out. Please try again.', error);
   }
