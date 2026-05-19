@@ -18,7 +18,7 @@ const generateSignature = (req, res) => {
 }
 
 const test = (req, res) => {
-    res.json({ message: 'User API is working!' });
+    res.json({ message: 'User API is working hello abukiiii' });
 }
 
 const updateUser = async (req, res, next) => {
