@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
+import { persistStore } from 'redux-persist';
 import userReducer from './userSlice.js';
 import themeReducer from './themeSlice.js';
 
@@ -25,5 +26,7 @@ export const store = configureStore({
         serializableCheck: false, 
     }),
 });
+
+export const persistor = persistStore(store);
 
 
