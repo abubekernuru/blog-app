@@ -1,15 +1,24 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
+const dotenv = require('dotenv');
+const app = express();
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || FRONTEND_URL || 'http://localhost:5173')
+const rawOrigins = [
+    process.env.FRONTEND_URL,         
+    process.env.ALLOWED_ORIGINS,       
+    'http://localhost:5173',          
+    'http://localhost:5174',           
+    'http://localhost:3000',          
+].join(',');
+
+const allowedOrigins = rawOrigins
   .split(',')
-  .map(s => s.trim())
+  .map(s => s.trim().replace(/\/$/, ''))   
   .filter(Boolean);
+
 
 app.use(cors({
   origin: (origin, callback) => {
